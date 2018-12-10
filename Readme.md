@@ -34,3 +34,7 @@ Hlutir sem hægt er að gera
 
 
 
+add_file_to_dest(tuple(Show name, Season), str)
+	Tekur við tuple sem segir til um þátta nafn og seríu, býr til þær möppur sem á við
+	Gerir ekkert ef viðeigandi möppur eru nú þegar til
+	TODO auðvelt að bæta við virkni til þess að láta fallið færa möppurnar sjálfar yfir og endurskýra þær 
