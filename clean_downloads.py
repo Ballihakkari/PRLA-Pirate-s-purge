@@ -1,9 +1,19 @@
 from pathlib import Path
-def getFileDirList(origin):
-    fileExtentionWhitelist = ['avi', 'flv', 'mp4', 'mkv', 'wmv', 'mov']
-    fileList = [i for i in Path(origin).glob('**/*') if str(i).rsplit('.',1)[1] in fileExtentionWhitelist]
+def main():
+    # Will be user inputed: *********
+    origin = "./Test Data/downloads"
+    dest = "./Test Data/videos"
+    # *******************************
+
+    pathList = getFileDirList(origin)
+    fileList = [i.name for i in pathList]
 
     return fileList
 
-# print(getFileDirList("C:\\Users\\Egill\\Documents\\HR\\Önn 3\\3. Vikna Verkefni [Python]\\Assingments\\Group project\\Test Data\\downloads", ""))
-getFileDirList("Test Data\\downloads", "")
+
+def getFileDirList(origin):
+    fileExtentionWhitelist = ['.avi', '.flv', '.mp4', '.mkv', '.wmv', '.mov']
+    return [i.relative_to(origin) for i in Path(origin).glob('**/*') if i.suffix in fileExtentionWhitelist]
+
+
+print(main())
