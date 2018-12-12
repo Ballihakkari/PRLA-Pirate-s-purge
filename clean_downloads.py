@@ -12,15 +12,16 @@ def main():
     fileListNoSamples = sapleFilter(filePartsList)
     fileListNoURL     = urlStripFilename(fileListNoSamples)
     fileListNoSymbols = sybolStripFilename(fileListNoURL)
-    fileListBuilt     = buildFilename(fileListNoSymbols)
+    fileListSeasoned  = seasonFixer(fileListNoSymbols)
+    fileListBuilt     = buildFilename(fileListSeasoned)
     fileListTitled    = titleFilename(fileListBuilt)
     fileListYears     = yearBrackedizer(fileListTitled)
     fileListNoEndings = stripFilename(fileListYears)
     
 
     todo = [i for i in fileListNoEndings if not search('S\d\dE\d\d',i[-1]) and not search('\(\d{4}\)',i[-1])]
-    return todo
-    # return fileListNoEndings
+    # return todo
+    return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
@@ -73,6 +74,19 @@ def titleFilename(fileDirList):
         fileParts = i[-1].rsplit('.',1)
         filteredList.append(i[:-1] + (fileParts[0].title()+'.'+fileParts[-1].lower(),))
     return filteredList
+
+
+def seasonFixer(fileDirLis):
+    filteredList = []
+    for i in fileDirLis:
+        m4 = search('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1])
+        if m4:
+            se = filterSE(i)
+            if se is not None:
+                filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+    return filteredList
+
+
 
 
 def buildFilename(fileDirList):
