@@ -2,11 +2,17 @@ from pathlib import Path
 import os
 
 def add_file_to_dest(obj, structured_folder, file_path, new_file_name):
-    directory = structured_folder / obj[0] / obj[1]
-    destination = directory / new_file_name
-    if not directory.is_dir():
-        Path(directory).mkdir(parents=True, exist_ok=True)
-    os.rename(file_path, destination)
+    if obj[1]:  #obj is show
+        directory = structured_folder / obj[0] / obj[1]
+        destination = directory / new_file_name
+        if not directory.is_dir():
+            Path(directory).mkdir(parents=True, exist_ok=True)
+        os.rename(file_path, destination)
+    else:       #obj movie or misc
+        #TODO
+        #Sort into 
+        misc_directory = structured_folder / "Misc"
+        movies_directory = structured_folder / "Movies"
 
 #Demo 
 #NOTE: uses local files, will need to be altered before using. Must also make files that you want moved e.g SamuraiJack_BADTEXT_s4_e6.txt
