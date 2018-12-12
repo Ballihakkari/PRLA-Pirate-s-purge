@@ -7,17 +7,20 @@ def main():
     origin = "./Test Data/downloads"
     dest = "./Test Data/videos"
     # *******************************
-    fileDirList = getFileDirList(origin)
-    filePartsList = [i.parts for i in fileDirList]
+    fileDirList       = getFileDirList(origin)
+    filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
     fileListNoSamples = sapleFilter(filePartsList)
     fileListNoURL     = urlStripFilename(fileListNoSamples)
     fileListNoSymbols = sybolStripFilename(fileListNoURL)
-    fileListNoEndings = fileListNoSymbols #stripFilename(fileListNoSymbols)
-    fileListBuilt     = buildFilename(fileListNoEndings)
-    fileListTitled = titleFilename(fileListBuilt)
+    fileListBuilt     = buildFilename(fileListNoSymbols)
+    fileListTitled    = titleFilename(fileListBuilt)
+    fileListYears     = yearBrackedizer(fileListTitled)
+    fileListNoEndings = stripFilename(fileListYears)
+    
 
-    fileList = yearBrackedizer(fileListTitled)
-    return fileList
+    todo = [i for i in fileListNoEndings if not search('S\d\dE\d\d',i[-1]) and not search('\(\d{4}\)',i[-1])]
+    return todo
+    # return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
@@ -41,7 +44,7 @@ def urlStripFilename(fileDirList):
 
 
 def sapleFilter(fileDirList):
-    return [i for i in fileDirList if len([j for j in i if search("[Ss][Aa][Mm][Pp][Ll][Ee]", j)]) == 0]
+    return [i for i in fileDirList if len([j for j in i if search(regexes['sample'], j)]) == 0]
 
 
 def sybolStripFilename(fileDirList):
@@ -54,7 +57,14 @@ def sybolStripFilename(fileDirList):
 
 
 def stripFilename(fileDirList):
-    return [(i[:-1] + (sub('(?<=\d) .+(?=\.)','',i[-1]),)) for i in fileDirList]
+    filteredList = []
+    for i in fileDirList:
+        if search('S\d{2}E\d{2}',i[-1]):
+            filteredList.append(i[:-1] + (sub('(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
+        else:
+            filteredList.append(i[:-1] + (sub('(?<=\)) .+(?=\.)','',i[-1]),))
+    return filteredList
+    # return [(i[:-1] + (sub('(?<=\d .+(?=\.)','',i[-1]),)) for i in fileDirList]
 
 
 def titleFilename(fileDirList):
@@ -69,23 +79,34 @@ def buildFilename(fileDirList):
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
-        # print(fileParts[0])
-        m = match('\d+',i[-1]) 
+        m = match(regexes['num_no_space'],i[-1]) 
         if m:
             if len(m.group(0)) < 3:
-                if len(i) > 2 and search('\d{1,2}',i[-2]):
-                    filteredList.append(i[:-1] + (i[-3]+' S'+search('\d{1,2}',i[-2]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-                elif len(i) > 1 and search('\d{1,2}',i[-2]):
-                    filteredList.append(i[:-1] + ('S'+search('\d{1,2}',i[-2]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+                if len(i) > 3 and search(regexes['num_no_space'],i[-3]):
+                    filteredList.append(i[:-1] + (i[-4]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+                elif len(i) > 2 and search(regexes['num_no_space'],i[-3]):
+                    filteredList.append(i[:-1] + ('S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
                     
-            elif len(m.group(0)) == 3:
-                filteredList.append(i[:-1] + ('S0'+i[-1][0]+'E'+i[-1][1:],))
+            elif len(m.group(0)) == 3 and len(i) > 2:
+                if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+                    filteredList.append(i[:-1] + (i[-4]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
+                else:
+                    filteredList.append(i[:-1] + (i[-3]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
+            elif len(m.group(0)) == 4:
+                if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+                    filteredList.append(i[:-1] + (i[-4]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
+                else:
+                    filteredList.append(i[:-1] + (i[-3]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
             else:
-                filteredList.append(i[:-1] + ('S'+i[-1][:1]+'E'+i[-1][2:],))
-                # filteredList.append(i[:-1] + (sub('\d{1,2}\d{2}','S\g<0>',fileParts[0])+'.'+fileParts[1],))
-                # filteredList.append(i[:-1] + ('S'+search('\d{1,2}',fileParts[0]).zfill(2)+'E'+search('\d',fileParts[0])+'.'+fileParts[1],))
-        elif match('[Ee]?([Pp][Ii][Ss][Oo][Dd][Ee] )?',fileParts[0]):
-            filteredList.append(i)
+                filteredList.append(i)
+        elif match(regexes['usual_series_format'],i[-1]) and len(i) > 2 :
+            if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+                filteredList.append(i[:-1] + (i[-4]+' '+i[-1],))
+            else:
+                filteredList.append(i[:-1] + (i[-3]+' '+i[-1],))
+        elif match('[Ee]?([Pp][Ii][Ss][Oo][Dd][Ee])? ?\d',fileParts[0]) and len(i) > 3:
+            if search(regexes['num_no_space'],i[-3]):
+                filteredList.append(i[:-1] + (i[-3]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
         else:
             filteredList.append(i)
     return filteredList
@@ -101,12 +122,12 @@ def yearBrackedizer(fileDirList):
 
 
 # main()
-# count = 0
+count = 0
 for i in main():
     print(i)
-    # count += 1    
-    # if count == 40:
-    #     count = input()
-    #     count = 0
+    count += 1    
+    if count == 40:
+        count = input()
+        count = 0
 
 
