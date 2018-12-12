@@ -3,22 +3,38 @@
 #Returns season and episode of file formated as:
 #('01', '01')
 import re
+from regexfolders import regexes
 def extract_season_episode(s):
-    x = re.search(r'[sS]?\d{1,2}[eEx]\d{1,2}', s)
-    if x:
-        x = x.group(0).upper()
-        if 'X' in x:
-            y = x.split("X")
-        else:
-            y = x.split("E")
-        y[0] = y[0].replace("S", "")
-        if len(y[0]) == 1:
-            y[0] = '0' + y[0]
+    s = s.lower()
+    y = []
+    if 'e' in s:
+        y = s.split("e")
+        y[0] = y[0].replace("s", "")
+    elif 'x' in s:
+        y = s.split("x")
+    elif re.search(regexes['series_and_episode_split_on_dot'], s):
+        y = s[1:-1].split('.')
+    else:
+        if len(s) == 3:
+            y.append(s[0])
+            y.append(s[1:])
+        elif len(s) == 4:
+            if s[0].isdigit():
+                y.append(s[0])
+                y.append(s[1:-1])
+            else:
+                y.append(s[1])
+                y.append(s[2:])
+        else: 
+            y.append(s[1])
+            y.append(s[2:-1])
+    if len(y[0]) == 1:
+        y[0] = '0' + y[0]
         
-        if len(y[1]) == 1:
-            y[1] = '0' + y[1]
+    if len(y[1]) == 1:
+        y[1] = '0' + y[1]
         
-        return tuple(y)
+    return tuple(y)
 
 # s = """Brooklyn.Nine-Nine.S03E04.INTERNAL.XviD-AFG.avi
 # Buffy S01E01 - Welcome to the Hellmouth.avi
