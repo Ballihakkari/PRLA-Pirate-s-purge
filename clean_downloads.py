@@ -1,6 +1,7 @@
 from pathlib import Path
 from re import search, sub
 from regexfolders import regexes
+from filterSeason import filter_Season as filterSE
 def main():
     # Will be user inputed: *********
     origin = "./Test Data/downloads"
@@ -9,9 +10,10 @@ def main():
 
     fileDirList = getFileDirList(origin)
     filePartsList = [i.parts for i in fileDirList]
-    fileListNoSamples = sapleFilter(filePartsList)
-    fileList = urlFilterName(fileListNoSamples)
-
+    fileList = sapleFilter(filePartsList)
+    #fileList = urlFilterName(fileListNoSamples)
+    for i in fileList:
+        filterSE(i)
     return fileList
 
 
@@ -29,5 +31,4 @@ def sapleFilter(fileDirList):
     return [i for i in fileDirList if len([j for j in i if search("[Ss]ample", j)]) == 0]
 
 
-for i in main():
-    print(i)
+main()
