@@ -28,12 +28,10 @@ def extract_season_episode(s):
         else: 
             y.append(s[1])
             y.append(s[2:-1])
-    if len(y[0]) == 1:
-        y[0] = '0' + y[0]
-        
-    if len(y[1]) == 1:
-        y[1] = '0' + y[1]
-        
+    for i in range(len(y)):
+        if len(y[i]) == 1:
+            y[i] = '0' + y[i]
+    
     return tuple(y)
 
 # s = """Brooklyn.Nine-Nine.S03E04.INTERNAL.XviD-AFG.avi
