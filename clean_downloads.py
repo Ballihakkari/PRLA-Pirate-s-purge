@@ -7,8 +7,10 @@ from add_file_to_dest import add_file_to_dest
 import asyncio
 def main():
     # Will be user inputed: *********
-    origin = "./Test Data/downloads"
-    dest = "./Test Data/videos"
+    user_input = asyncio.run(great_user())   #Returns tuple(origin, destination, settings)
+    origin = user_input[0]     
+    dest = user_input[1]       
+    settings = user_input[2]
     # *******************************
     fileDirList       = getFileDirList(origin)
     filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
@@ -67,7 +69,7 @@ def stripFilename(fileDirList):
 
 def titleFilename(fileDirList):
     filteredList = []
-    for i in fileDirList:
+    for i in fileDigit rList:
         fileParts = i[-1].rsplit('.',1)
         filteredList.append(i[:-1] + (fileParts[0].title()+'.'+fileParts[-1].lower(),))
     return filteredList
