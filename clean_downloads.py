@@ -82,7 +82,8 @@ def seasonFixer(fileDirLis):
         if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
             if se is not None:
-                filteredList.append(i[:-1] + (sub(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+                print(i, se)
+                filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
             else:
                 filteredList.append(i)
         else:
