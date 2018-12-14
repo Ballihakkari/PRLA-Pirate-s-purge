@@ -19,7 +19,7 @@ def main():
     fileListTitled    = titleFilename(fileListSpaced)
     fileListNoEndings = stripFilename(fileListTitled)
     
-    todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
+    todo = [i for i in fileListNoEndings if not search(r'.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
     # return todo
     return fileListNoEndings
 
@@ -37,6 +37,8 @@ def regExReplace(regExString, replacementString, pathParts):
 
 def urlStripFilename(fileDirList):
     return [regExReplace(regexes['url_detector'], '', i) for i in fileDirList]
+    # return [i[:-1] + (regExReplace(regexes['url_detector'], '', i),) for i in fileDirList]
+
 
 def sapleFilter(fileDirList):
     return [i for i in fileDirList if len([j for j in i if search(regexes['sample'], j)]) == 0]
@@ -46,17 +48,18 @@ def sybolStripFilename(fileDirList):
     filtredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
-        filtredList.append(i[:-1] + (sub('  +',' ',sub('[\.\-\(\)\[\]]',' ',fileParts[0]).strip())+'.'+fileParts[1],))
+        filtredList.append(i[:-1] + (sub('  +',' ',sub(r'[\.\-\(\)\[\]]',' ',fileParts[0]).strip())+'.'+fileParts[1],))
     return filtredList
 
 
 def stripFilename(fileDirList):
     filteredList = []
     for i in fileDirList:
-        if search('S\d{2}E\d{2}',i[-1]):
-            filteredList.append(i[:-1] + (sub('(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
+        if search(r'S\d{2}E\d{2}',i[-1]):
+            # filteredList.append(i[:-1] + (sub('(?:S\d{2}E\d{2}[^ ]*) .+(?=\.)','\g<0>',sub(' \(\d{4}\)','',i[-1])),)) # ToDo
+            filteredList.append(i[:-1] + (sub(r'(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(regexes['realease_year'],'',i[-1])),))
         else:
-            filteredList.append(i[:-1] + (sub('(?<=\)) .+(?=\.)','',i[-1]),))
+            filteredList.append(i[:-1] + (sub(r'(?<=\)) .+(?=\.)','',i[-1]),))
     return filteredList
 
 
@@ -71,10 +74,10 @@ def titleFilename(fileDirList):
 def seasonFixer(fileDirLis):
     filteredList = []
     for i in fileDirLis:
-        if search('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
+        if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
             if se is not None:
-                filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+                filteredList.append(i[:-1] + (sub(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
             else:
                 filteredList.append(i)
         else:
@@ -82,30 +85,55 @@ def seasonFixer(fileDirLis):
     return filteredList
 
 def seasonSpacer(fileDirList):
-    filteredList = [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
-    return [i[:-1] + (sub('(?<= )[Ss]\d{2}[Ee]\d{2}(?=[^ ])','\g<0> ', i[-1]),) for i in filteredList]
+    return [i[:-1] + (sub(r'(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',r' \g<0>', i[-1]),) for i in fileDirList]
+    # filteredList = [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
+    # return [i[:-1] + (sub('(?<= )[Ss]\d{2}[Ee]\d{2}(?=[^ ])','\g<0> ', i[-1]),) for i in filteredList]
 
-
+#*************************************************************************************************************************
+#*************************************************************************************************************************
 def buildFilename(fileDirList):
     filteredList = []
     for i in fileDirList:
-        leng = len(i)
+        # print(i)
+        fileParts = i[-1].rsplit('.',1)
+        fileDirDepth = len(i)
         isMatch = match(regexes['num_no_space'], i[-1])
-        if isMatch:
-            print(i, isMatch.group()) 
-
-    return fileDirList
-    # return filteredList
+        isSeasoned = search(r'[Ss]?\d{2}[EeXx ]+\d{2}', i[-1])
+        if isMatch and not isSeasoned: 
+            # print(i, isMatch.group()) 
+            if len(match(r'\d+',isMatch.group(0)).group(0)) < 3:
+                parentIsSeason = match(r'([Ss].* ?\d+)|(\d{1,2}\.? ?[Ss])',i[-3])
+                # parentIsSeason = (match('[Ss].* ?\d',i[-3]) is not None or match('\d{1,2}\.? ?[Ss]',i[-3]) is not None)
+                if fileDirDepth > 3:
+                    seasonNr = search(r'\d{1,2}',parentIsSeason.group(0))
+                    if parentIsSeason is not None and seasonNr:
+                    # if seasonNr:
+                        filteredList.append(i[:-1] + (i[-4] + ' S' + seasonNr.group(0).zfill(2) + 'E' + fileParts[0].zfill(2)+'.'+fileParts[1],))
+                        # print("New Filename: ", i[:-1] + (i[-4] + ' S' + seasonNr.group(0).zfill(2) + 'E' + fileParts[0].zfill(2)+'.'+fileParts[1],), "\tparentIsSeason: ", parentIsSeason, "\tseasonNr: ", seasonNr)
+                    else:
+                        print("Not Handled: ", i, "\tparentIsSeason: ", parentIsSeason, "\tseasonNr: ", seasonNr)
+                        filteredList.append(i)
+            else:
+                if fileDirDepth > 3: 
+                    filteredList.append(i[:-1] + (i[-4] + ' S' + i[-1][:1].zfill(2) + 'E' + i[-1][1:] ,))
+                    # filteredList.append(i[:-1] + (i[-4] + i[-1],))
+                    # print("New Filename 2: ", i[:-1] + (i[-4] + ' S' + i[-1][:1].zfill(2) + 'E' + i[-1][1:] ,))
+                else:
+                    print("Not Handled 2: ", i)
+                    filteredList.append(i)
+        else:
+            # print(i)
+            filteredList.append(i)
+    # return fileDirList
+    return filteredList
 
     
    
 
 
 
-
-   
-
-
+#*************************************************************************************************************************
+#*************************************************************************************************************************
 
 #  filteredList = []
 #     for i in fileDirList:
@@ -150,40 +178,44 @@ def yearBrackedizer(fileDirList):
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
-        filteredList.append(i[:-1] + (sub('(19|20)\d{2}','(\g<0>)',fileParts[0])+'.'+fileParts[1],))
+        filteredList.append(i[:-1] + (sub(r'(19|20)\d{2}',r'(\g<0>)',fileParts[0])+'.'+fileParts[1],))
+
     return filteredList
 
 
 
-main()
+# main()
 count = 0
 for i in main():
-    # print(i)
+    print(i)
     count += 1    
     # if count == 40:
     #     count = input()
     #     count = 0
 print(count)
 
-step_1 = getFileDirList("Test Data/downloads")
-print("S1: ", len(step_1))
-step_2 = [i.parts + (i.parts[-1],) for i in step_1]
-print("S2: ", len(step_2))
-step_3 = sapleFilter(step_2)
-print("S3: ", len(step_3))
-step_4 = urlStripFilename(step_3)
-print("S4: ", len(step_4))
-step_5 = sybolStripFilename(step_4)
-print("S5: ", len(step_5))
-step_6 = yearBrackedizer(step_5)
-print("S6: ", len(step_6))
-step_7 = buildFilename(step_6)
-print("S7: ", len(step_7))
-step_8 = seasonFixer(step_7)
-print("S8: ", len(step_8))
-step_9 = seasonSpacer(step_8)
-print("S9: ", len(step_9))
-step_10 = titleFilename(step_9)
-print("S10: ", len(step_10))
-step_10 = stripFilename(step_10)
-print("S10: ", len(step_10))
+
+# step_1 = getFileDirList("Test Data/downloads")
+# print("S1: ", len(step_1))
+# step_2 = [i.parts + (i.parts[-1],) for i in step_1]
+# print("S2: ", len(step_2))
+# step_3 = sapleFilter(step_2)
+# print("S3: ", len(step_3))
+# step_4 = urlStripFilename(step_3)
+# print("S4: ", len(step_4))
+# step_5 = sybolStripFilename(step_4)
+# print("S5: ", len(step_5))
+# step_6 = yearBrackedizer(step_5)
+# print("S6: ", len(step_6))
+# step_7 = buildFilename(step_6)
+# print("S7: ", len(step_7))
+# step_8 = seasonFixer(step_7)
+# print("S8: ", len(step_8))
+# step_9 = seasonSpacer(step_8)
+# print("S9: ", len(step_9))
+# step_10 = titleFilename(step_9)
+# print("S10: ", len(step_10))
+# step_10 = stripFilename(step_10)
+# print("S10: ", len(step_10))
+# total = {i[-1] for i in step_10}
+# print("Total: ", len(total))
