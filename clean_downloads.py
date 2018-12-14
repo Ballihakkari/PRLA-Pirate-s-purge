@@ -20,8 +20,8 @@ def main():
     fileListNoEndings = stripFilename(fileListTitled)
     
     todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
-    return todo
-    # return fileListNoEndings
+    # return todo
+    return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
@@ -87,44 +87,63 @@ def seasonSpacer(fileDirList):
 
 
 def buildFilename(fileDirList):
-    # return fileDirList
-    
     filteredList = []
     for i in fileDirList:
-        fileParts = i[-1].rsplit('.',1)
-        m = match(regexes['num_no_space'],i[-1]) 
-        if m:
-            if len(m.group(0)) < 3 and search(regexes['num_no_space'],i[-3]):
+        leng = len(i)
+        isMatch = match(regexes['num_no_space'], i[-1])
+        if isMatch:
+            print(i, isMatch.group()) 
 
-                if len(i) > 3:
-                    filteredList.append(i[:-1] + (i[-4]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-                elif len(i) > 2 :# and search(regexes['num_no_space'],i[-3]):
-                    filteredList.append(i[:-1] + ('S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+    return fileDirList
+    # return filteredList
+
+    
+   
+
+
+
+
+   
+
+
+
+#  filteredList = []
+#     for i in fileDirList:
+#         fileParts = i[-1].rsplit('.',1)
+#         m = match(regexes['num_no_space'],i[-1]) 
+#         if m:
+#             if len(m.group(0)) < 3 and search(regexes['num_no_space'],i[-3]):
+
+#                 if len(i) > 3:
+#                     filteredList.append(i[:-1] + (i[-4]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+#                 elif len(i) > 2 :# and search(regexes['num_no_space'],i[-3]):
+#                     filteredList.append(i[:-1] + ('S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+#                 else:
+#                     filteredList.append(i)
                     
-            elif len(m.group(0)) == 3 and len(i) > 2:
-                if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-                    filteredList.append(i[:-1] + (i[-4]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
-                else:
-                    filteredList.append(i[:-1] + (i[-3]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
-            elif len(m.group(0)) == 4:
-                if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-                    filteredList.append(i[:-1] + (i[-4]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
-                else:
-                    filteredList.append(i[:-1] + (i[-3]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
-            else:
-                filteredList.append(i)
-        elif match(regexes['usual_series_format'],i[-1]) and len(i) > 2 :
-            if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-                filteredList.append(i[:-1] + (i[-4]+' '+i[-1],))
-            else:
-                filteredList.append(i[:-1] + (i[-3]+' '+i[-1],))
-        elif match('[Ee]?([Pp][Ii][Ss][Oo][Dd][Ee])? ?\d',fileParts[0]) and len(i) > 3:
-            if search(regexes['num_no_space'],i[-3]):
-                filteredList.append(i[:-1] + (i[-3]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-        else:
-            filteredList.append(i)
-    return filteredList
-
+#             elif len(m.group(0)) == 3 and len(i) > 2:
+#                 if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+#                     filteredList.append(i[:-1] + (i[-4]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
+#                 else:
+#                     filteredList.append(i[:-1] + (i[-3]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
+#             elif len(m.group(0)) == 4:
+#                 if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+#                     filteredList.append(i[:-1] + (i[-4]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
+#                 else:
+#                     filteredList.append(i[:-1] + (i[-3]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
+#             else:
+#                 filteredList.append(i)
+#         elif match(regexes['usual_series_format'],i[-1]) and len(i) > 2 :
+#             if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
+#                 filteredList.append(i[:-1] + (i[-4]+' '+i[-1],))
+#             else:
+#                 filteredList.append(i[:-1] + (i[-3]+' '+i[-1],))
+#         elif match('[Ee]?([Pp][Ii][Ss][Oo][Dd][Ee])? ?\d',fileParts[0]) and len(i) > 3:
+#             if search(regexes['num_no_space'],i[-3]):
+#                 filteredList.append(i[:-1] + (i[-3]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
+#         else:
+#             filteredList.append(i)
+#     return filteredList
 
 def yearBrackedizer(fileDirList):
     # return [regSub]
@@ -136,10 +155,10 @@ def yearBrackedizer(fileDirList):
 
 
 
-# main()
+main()
 count = 0
 for i in main():
-    print(i)
+    # print(i)
     count += 1    
     # if count == 40:
     #     count = input()
@@ -168,15 +187,3 @@ step_10 = titleFilename(step_9)
 print("S10: ", len(step_10))
 step_10 = stripFilename(step_10)
 print("S10: ", len(step_10))
-
-    # fileDirList       = getFileDirList(origin)
-    # filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
-    # fileListNoSamples = sapleFilter(filePartsList)
-    # fileListNoURL     = urlStripFilename(fileListNoSamples)
-    # fileListNoSymbols = sybolStripFilename(fileListNoURL)
-    # fileListYears     = yearBrackedizer(fileListNoSymbols)
-    # fileListBuilt     = buildFilename(fileListYears)
-    # fileListSeasoned  = seasonFixer(fileListBuilt)
-    # fileListSpaced    = seasonSpacer(fileListSeasoned)
-    # fileListTitled    = titleFilename(fileListSpaced)
-    # fileListNoEndings = stripFilename(fileListTitled)
