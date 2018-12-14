@@ -15,7 +15,8 @@ def main():
     fileListYears     = yearBrackedizer(fileListNoSymbols)
     fileListBuilt     = buildFilename(fileListYears)
     fileListSeasoned  = seasonFixer(fileListBuilt)
-    fileListTitled    = titleFilename(fileListSeasoned)
+    fileListSpaced    = seasonSpacer(fileListSeasoned)
+    fileListTitled    = titleFilename(fileListSpaced)
     fileListNoEndings = stripFilename(fileListTitled)
     
     todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
@@ -78,7 +79,8 @@ def seasonFixer(fileDirLis):
                 filteredList.append(i)
     return filteredList
 
-
+def seasonSpacer(fileDirList):
+    return [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
 
 
 def buildFilename(fileDirList):
@@ -133,7 +135,7 @@ def yearBrackedizer(fileDirList):
 # main()
 count = 0
 for i in main():
-    print(i)
+    print(i[-1])
     count += 1    
     # if count == 40:
     #     count = input()
