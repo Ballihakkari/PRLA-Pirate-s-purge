@@ -20,8 +20,8 @@ def main():
     fileListNoEndings = stripFilename(fileListTitled)
     
     todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
-    # return todo
-    return fileListNoEndings
+    return todo
+    # return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
