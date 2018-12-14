@@ -20,8 +20,8 @@ def main():
     fileListNoEndings = stripFilename(fileListTitled)
     
     todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
-    return todo
-    # return fileListNoEndings
+    # return todo
+    return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
@@ -56,7 +56,7 @@ def stripFilename(fileDirList):
         if search('S\d{2}E\d{2}',i[-1]):
             filteredList.append(i[:-1] + (sub('(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
         else:
-            filteredList.append(regExReplace('(?<=\)) .+(?=\.)','',i))
+            filteredList.append(i[:-1] + (sub('(?<=\)) .+(?=\.)','',i[-1]),))
     return filteredList
 
 
@@ -80,7 +80,8 @@ def seasonFixer(fileDirLis):
     return filteredList
 
 def seasonSpacer(fileDirList):
-    return [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
+    filteredList = [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
+    return [i[:-1] + (sub('(?<= )[Ss]\d{2}[Ee]\d{2}(?=[^ ])','\g<0> ', i[-1]),) for i in filteredList]
 
 
 def buildFilename(fileDirList):
@@ -135,7 +136,7 @@ def yearBrackedizer(fileDirList):
 # main()
 count = 0
 for i in main():
-    print(i[-1])
+    print(i[-2:])
     count += 1    
     # if count == 40:
     #     count = input()
