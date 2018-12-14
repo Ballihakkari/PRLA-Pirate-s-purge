@@ -12,16 +12,15 @@ def main():
     fileListNoSamples = sapleFilter(filePartsList)
     fileListNoURL     = urlStripFilename(fileListNoSamples)
     fileListNoSymbols = sybolStripFilename(fileListNoURL)
-    fileListSeasoned  = seasonFixer(fileListNoSymbols)
-    fileListBuilt     = buildFilename(fileListSeasoned)
-    fileListTitled    = titleFilename(fileListBuilt)
-    fileListYears     = yearBrackedizer(fileListTitled)
-    fileListNoEndings = stripFilename(fileListYears)
+    fileListYears     = yearBrackedizer(fileListNoSymbols)
+    fileListBuilt     = buildFilename(fileListYears)
+    fileListSeasoned  = seasonFixer(fileListBuilt)
+    fileListTitled    = titleFilename(fileListSeasoned)
+    fileListNoEndings = stripFilename(fileListTitled)
     
-
-    todo = [i for i in fileListNoEndings if not search('S\d\dE\d\d',i[-1]) and not search('\(\d{4}\)',i[-1])]
-    # return todo
-    return fileListNoEndings
+    todo = [i for i in fileListNoEndings if not search('.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
+    return todo
+    # return fileListNoEndings
 
     # for i in fileList:
     #     filterSE(i)
@@ -31,18 +30,12 @@ def getFileDirList(origin):
     fileExtentionWhitelist = ['.avi', '.flv', '.mkv', '.mp4', '.mov', '.wmv']
     return [i.relative_to(origin) for i in Path(origin).glob('**/*') if i.suffix.lower() in fileExtentionWhitelist]
 
+def regExReplace(regExString, replacementString, pathParts):
+    fileParts = pathParts[-1].rsplit('.',1)
+    return pathParts[:-1] + (sub(regExString, replacementString, fileParts[0]) + '.' + fileParts[1],)
 
 def urlStripFilename(fileDirList):
-    filteredList = []
-    for i in fileDirList:
-        fileParts = i[-1].rsplit('.',1)
-        if search(regexes['url_detector'],fileParts[0]):
-            filteredList.append((i[:-1] + (sub(regexes['url_detector'],"",fileParts[0])+'.'+fileParts[1],)))
-        else:
-            filteredList.append(i)
-    return filteredList
-    # return [i if not search(regexes['url_detector'],i[-1].rsplit('.',1)[0]) else (i[:-1] + (sub(regexes['url_detector'],"",i[-1].rsplit('.',1)[0])+'.'+i[-1].rsplit('.',1)[1],)) for i in fileDirList]
-
+    return [regExReplace(regexes['url_detector'], '', i) for i in fileDirList]
 
 def sapleFilter(fileDirList):
     return [i for i in fileDirList if len([j for j in i if search(regexes['sample'], j)]) == 0]
@@ -52,7 +45,6 @@ def sybolStripFilename(fileDirList):
     filtredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
-        # filtredList.append(i[:-1] + (sub('  +',' ',sub('\W',' ',fileParts[0]).strip())+'.'+fileParts[1],))
         filtredList.append(i[:-1] + (sub('  +',' ',sub('[\.\-\(\)\[\]]',' ',fileParts[0]).strip())+'.'+fileParts[1],))
     return filtredList
 
@@ -63,9 +55,8 @@ def stripFilename(fileDirList):
         if search('S\d{2}E\d{2}',i[-1]):
             filteredList.append(i[:-1] + (sub('(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
         else:
-            filteredList.append(i[:-1] + (sub('(?<=\)) .+(?=\.)','',i[-1]),))
+            filteredList.append(regExReplace('(?<=\)) .+(?=\.)','',i))
     return filteredList
-    # return [(i[:-1] + (sub('(?<=\d .+(?=\.)','',i[-1]),)) for i in fileDirList]
 
 
 def titleFilename(fileDirList):
@@ -79,26 +70,30 @@ def titleFilename(fileDirList):
 def seasonFixer(fileDirLis):
     filteredList = []
     for i in fileDirLis:
-        m4 = search('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1])
-        if m4:
+        if search('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
             if se is not None:
                 filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+            else:
+                filteredList.append(i)
     return filteredList
 
 
 
 
 def buildFilename(fileDirList):
+    # return fileDirList
+    
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
         m = match(regexes['num_no_space'],i[-1]) 
         if m:
-            if len(m.group(0)) < 3:
-                if len(i) > 3 and search(regexes['num_no_space'],i[-3]):
+            if len(m.group(0)) < 3 and search(regexes['num_no_space'],i[-3]):
+
+                if len(i) > 3:
                     filteredList.append(i[:-1] + (i[-4]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-                elif len(i) > 2 and search(regexes['num_no_space'],i[-3]):
+                elif len(i) > 2 :# and search(regexes['num_no_space'],i[-3]):
                     filteredList.append(i[:-1] + ('S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
                     
             elif len(m.group(0)) == 3 and len(i) > 2:
@@ -140,8 +135,9 @@ count = 0
 for i in main():
     print(i)
     count += 1    
-    if count == 40:
-        count = input()
-        count = 0
+    # if count == 40:
+    #     count = input()
+    #     count = 0
+print(count)
 
 
