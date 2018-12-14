@@ -77,6 +77,8 @@ def seasonFixer(fileDirLis):
                 filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
             else:
                 filteredList.append(i)
+        else:
+            filteredList.append(i)
     return filteredList
 
 def seasonSpacer(fileDirList):
@@ -125,6 +127,7 @@ def buildFilename(fileDirList):
 
 
 def yearBrackedizer(fileDirList):
+    # return [regSub]
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
@@ -136,11 +139,44 @@ def yearBrackedizer(fileDirList):
 # main()
 count = 0
 for i in main():
-    print(i[-2:])
+    print(i)
     count += 1    
     # if count == 40:
     #     count = input()
     #     count = 0
 print(count)
 
+step_1 = getFileDirList("Test Data/downloads")
+print("S1: ", len(step_1))
+step_2 = [i.parts + (i.parts[-1],) for i in step_1]
+print("S2: ", len(step_2))
+step_3 = sapleFilter(step_2)
+print("S3: ", len(step_3))
+step_4 = urlStripFilename(step_3)
+print("S4: ", len(step_4))
+step_5 = sybolStripFilename(step_4)
+print("S5: ", len(step_5))
+step_6 = yearBrackedizer(step_5)
+print("S6: ", len(step_6))
+step_7 = buildFilename(step_6)
+print("S7: ", len(step_7))
+step_8 = seasonFixer(step_7)
+print("S8: ", len(step_8))
+step_9 = seasonSpacer(step_8)
+print("S9: ", len(step_9))
+step_10 = titleFilename(step_9)
+print("S10: ", len(step_10))
+step_10 = stripFilename(step_10)
+print("S10: ", len(step_10))
 
+    # fileDirList       = getFileDirList(origin)
+    # filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
+    # fileListNoSamples = sapleFilter(filePartsList)
+    # fileListNoURL     = urlStripFilename(fileListNoSamples)
+    # fileListNoSymbols = sybolStripFilename(fileListNoURL)
+    # fileListYears     = yearBrackedizer(fileListNoSymbols)
+    # fileListBuilt     = buildFilename(fileListYears)
+    # fileListSeasoned  = seasonFixer(fileListBuilt)
+    # fileListSpaced    = seasonSpacer(fileListSeasoned)
+    # fileListTitled    = titleFilename(fileListSpaced)
+    # fileListNoEndings = stripFilename(fileListTitled)
