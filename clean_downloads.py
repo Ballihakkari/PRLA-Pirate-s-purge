@@ -189,15 +189,15 @@ def yearBrackedizer(fileDirList):
 
 
 
-# main()
-count = 0
-for i in main():
-    print(i)
-    count += 1    
-    # if count == 40:
-    #     count = input()
-    #     count = 0
-print(count)
+main()
+# count = 0
+# for i in main():
+#     print(i)
+#     count += 1    
+#     # if count == 40:
+#     #     count = input()
+#     #     count = 0
+# print(count)
 
 
 # step_1 = getFileDirList("Test Data/downloads")
