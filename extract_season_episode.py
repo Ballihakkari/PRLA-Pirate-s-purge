@@ -8,12 +8,11 @@ from roman_to_arabic import roman_to_arabic
 def extract_season_episode(s):
     y = []
     if type(s) != str:
-        for n,i in enumerate(s):
+        for i in s:
             if not i[1].isdigit():
-                y.append(roman_to_arabic(i[1]))
+                y.append(str(roman_to_arabic(i[1])))
             else:
-                y.append(i[1])
-        return tuple(y)
+                y.append(str(i[1]))
     else:
         s = s.lower()
         s = re.sub(" ", "", s)
@@ -25,8 +24,8 @@ def extract_season_episode(s):
         elif re.search(regexes['series_and_episode_split_on_dot'], s):
             y = s[1:-1].split('.')
         else:
-            if re.search('\d{4}', s):
-                x = re.search('\d{4}',s).group()
+            if re.search(r'\d{4}', s):
+                x = re.search(r'\d{4}',s).group()
                 y.append(x[0:2])
                 y.append(x[2:])
             elif len(s) == 3:
@@ -45,5 +44,7 @@ def extract_season_episode(s):
     for i in range(len(y)):
         if len(y[i]) == 1:
             y[i] = '0' + y[i]
-    
-    return tuple(y)
+    if len(y) >= 2:
+        return tuple(y)
+    else: 
+        return None
