@@ -19,7 +19,10 @@ def extract_season_episode(s):
             y.append(s[0])
             y.append(s[1:])
         elif len(s) == 4:
-            if s[0].isdigit():
+            if s.isdigit():
+                y.append(s[0:2])
+                y.append(s[2:])
+            elif s[0].isdigit():
                 y.append(s[0])
                 y.append(s[1:-1])
             else:
