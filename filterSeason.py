@@ -3,6 +3,8 @@ from regexfolders import regexes
 from extract_season_episode import extract_season_episode as extractSE
 def filter_Season(i):
     for j in reversed(i):
+        j = j.lower()
+        j = re.sub("episode", "e", j)
         usual_format = re.search(regexes['usual_series_format'], j)
         split_on_x = re.search(regexes['series_and_episode_split_on_x'], j)
         split_on_dot = re.search(regexes['series_and_episode_split_on_dot'], j)
