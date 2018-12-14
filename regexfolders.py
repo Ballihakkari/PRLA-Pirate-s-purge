@@ -4,7 +4,8 @@ regexes = {
     'series_and_episode_split_on_x' : '\d{1,2}x\d{1,2}',
     'series_and_episode_split_on_dot' : '\[\d{1,2}\.\d{1,2}\]',
     'three_number_series_and_episodes' : '([ \.\-_,]|^)\d{3,4}($|[ \.\-_,abc])',
-    'has_roman_numbers' : '(?:([sS][eE][aA][sS][Oo][nN]|[eE][pP][iI][sS][oO][dD][eE]|[Ee|[Ss]) ?)([IVXCLDM]+|\d{1,2})',
+    #'has_roman_numbers' : '(?:([sS][eE][aA][sS][Oo][nN]|[eE][pP][iI][sS][oO][dD][eE]|[eE]|[Ss]) ?)([IVXCLDM]+|\d{1,2})[ \.]',
+    'has_roman_numbers' : '(?<=[^1-9a-zA-Z])(?:([sS][eE][aA][sS][Oo][nN]|[eE][pP][iI][sS][oO][dD][eE]|[eE]|[Ss]) ?)([IVXCLDM]+|\d{1,2})(?=[^1-9a-zA-Z])',
     'roman_num' : '[IVXCLDM]',
     'starts_with_season' : '^[sS]\d{1,2}',
     # Removing redundant URL from title
