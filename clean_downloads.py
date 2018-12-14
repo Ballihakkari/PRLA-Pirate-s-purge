@@ -2,6 +2,9 @@ from pathlib import Path
 from re import match, search, sub
 from regexfolders import regexes
 from filterSeason import filter_Season as filterSE
+from great_user import great_user
+from add_file_to_dest import add_file_to_dest
+import asyncio
 def main():
     # Will be user inputed: *********
     origin = "./Test Data/downloads"
@@ -21,6 +24,8 @@ def main():
     
     todo = [i for i in fileListNoEndings if not search(r'.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
     # return todo
+    for f in fileListNoEndings:
+        add_file_to_dest(f, origin, dest)  
     return fileListNoEndings
 
     # for i in fileList:
