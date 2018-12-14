@@ -2,6 +2,16 @@ import re
 from pathlib import Path
 import os
 
+def name_guarantee(name):
+    i = 1
+    temp_name = name
+    while os.path.exists(temp_name):
+        i += 1
+        temp_name = name
+        temp_name / Path("(" + str(i) + ")")
+    return temp_name
+        
+
 #file_info(path_part1/path_part2/path_part3/path_part4/.../new_name)
 def add_file_to_dest(file_info, origin, destination):
     file_location = Path(origin)
@@ -19,18 +29,21 @@ def add_file_to_dest(file_info, origin, destination):
         if not target_dir.is_dir():
             Path(target_dir).mkdir(parents=True, exist_ok=True)
         #TODO laga error "FileExistsError: [WinError 183] Cannot create a file when that file already exists:"
+        file_name = name_guarantee(file_name)
         os.rename(file_location, target_dir / file_name)
 
     elif movie_regex.search(file_name):
         movies_dir = destination / Path("Movies")
         if not movies_dir.is_dir():
             Path(movies_dir).mkdir(parents=True, exist_ok=True)
+        file_name = name_guarantee(file_name)
         os.rename(file_location, movies_dir / file_name)
 
     else:
         misc_dir = destination / Path("Miscellaneous")
         if not misc_dir.is_dir():
             Path(misc_dir).mkdir(parents=True, exist_ok=True)
+        file_name = name_guarantee(file_name)
         os.rename(file_location, misc_dir / file_name)
     return None
 
