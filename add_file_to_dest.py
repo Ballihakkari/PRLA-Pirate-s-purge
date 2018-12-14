@@ -1,20 +1,38 @@
-#obj = tuple(series_name, season, title, settings)
-#NOTE movies or misc are to be marked by having season == None
+import re
 from pathlib import Path
 import os
 
-def add_file_to_dest(obj, structured_folder, file_path):
-    if obj[1]:  #obj is show
-        directory = structured_folder / obj[0] / obj[1]
-        destination = directory / obj[2]
-        if not directory.is_dir():
-            Path(directory).mkdir(parents=True, exist_ok=True)
-        os.rename(file_path, destination)
-    else:       #obj movie or misc
-        #TODO
-        #Sort into 
-        misc_directory = structured_folder / "Misc"
-        movies_directory = structured_folder / "Movies"
+#file_info(path_part1/path_part2/path_part3/path_part4/.../new_name)
+def add_file_to_dest(file_info, origin, destination):
+    file_location = Path(origin)
+    file_name = file_info[-1]
+    for n in range(len(file_info) - 1):  #-1 since the last index is new file name
+        file_location = file_location / Path(file_info[n])
+    
+    show_regex = re.compile(r'(S\d{2}E\d{2})')
+    movie_regex = re.compile(r'\(\d{4}\)')
+    
+    if show_regex.search(file_name):
+        series = Path((str((re.search(r'[^(S\d{2}E\d{2})]*', file_name).group(0))).strip()))
+        season = Path(("Season " + str(re.search(r'(?<=S)(\d{2})', file_name).group(0))).strip())
+        target_dir = destination / Path("TV Shows") / series / season
+        if not target_dir.is_dir():
+            Path(target_dir).mkdir(parents=True, exist_ok=True)
+        #TODO laga error "FileExistsError: [WinError 183] Cannot create a file when that file already exists:"
+        os.rename(file_location, target_dir / file_name)
+
+    elif movie_regex.search(file_name):
+        movies_dir = destination / Path("Movies")
+        if not movies_dir.is_dir():
+            Path(movies_dir).mkdir(parents=True, exist_ok=True)
+        os.rename(file_location, movies_dir / file_name)
+
+    else:
+        misc_dir = destination / Path("Miscellaneous")
+        if not misc_dir.is_dir():
+            Path(misc_dir).mkdir(parents=True, exist_ok=True)
+        os.rename(file_location, misc_dir / file_name)
+    return None
 
 #Demo 
 #NOTE: uses local files, will need to be altered before using. Must also make files that you want moved e.g SamuraiJack_BADTEXT_s4_e6.txt
