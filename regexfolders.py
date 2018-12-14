@@ -11,5 +11,6 @@ regexes = {
     'url_detector' : 'www\..+\.[A-Za-z]{2}\.?[A-Za-z]{1,3}',
     # Finding sample files
     'sample' : '[Ss][Aa][Mm][Pp][Ll][Ee]',
-    'num_no_space' : '^[^Ss]\d+[^ ]'
+    'num_no_space' : '^[^Ss]\d+[^ ]',
+    'realease_year' : '\(\d{4}\)'
 }
