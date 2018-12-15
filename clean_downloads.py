@@ -94,12 +94,22 @@ def seasonFixer(fileDirLis):
     for i in fileDirLis:
         if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
-            if se is not None:
-                filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
-            else:
-                filteredList.append(i)
+            try:
+                if int(se[1]) > 1900:
+                    filteredList.append(i)
+                else:
+                    eval("40/0") #here we devide by zero, for comedic effect
+            except:
+                if se:
+                    SeriesString = 'S'
+                    for epse in se[0]:
+                        SeriesString+=epse+'E'
+                    SeriesString = SeriesString[:-1]
+                    filteredList.append(i[:-1] + (sub(se[1],SeriesString,i[-1],1),))
         else:
             filteredList.append(i)
+    for i in filteredList:
+        print(i[-1])
     return filteredList
 
 def seasonSpacer(fileDirList):
