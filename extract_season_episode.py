@@ -5,16 +5,19 @@
 import re
 from regexfolders import regexes
 from roman_to_arabic import roman_to_arabic
-def extract_season_episode(s):
+def extract_season_episode(input):
     y = []
-    if type(s) != str:
-        for i in s:
+    if type(input) != str:
+        for n,i in enumerate(input):
             if not i[1].isdigit():
                 y.append(str(roman_to_arabic(i[1])))
             else:
                 y.append(str(i[1]))
+            input[n] = " ".join(i)
+        input = " ".join(input)
     else:
-        s = s.lower()
+        s = input
+        s = str(s).lower()
         s = re.sub(" ", "", s)
         if 'e' in s:
             y = s.split("e")
@@ -45,6 +48,7 @@ def extract_season_episode(s):
         if len(y[i]) == 1:
             y[i] = '0' + y[i]
     if len(y) >= 2:
-        return tuple(y)
+        print(y,input)
+        return(y,input)
     else: 
         return None
