@@ -83,7 +83,7 @@ def stripFilename(fileDirList):
 
 def titleFilename(fileDirList):
     filteredList = []
-    for i in fileDigit rList:
+    for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
         filteredList.append(i[:-1] + (fileParts[0].title()+'.'+fileParts[-1].lower(),))
     return filteredList
