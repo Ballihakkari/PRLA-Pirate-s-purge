@@ -18,7 +18,6 @@ def main():
         origin = user_input[0]     
         dest = user_input[1]       
         # settings = user_input[2]
-    x = input()
     
     # Will be user inputed: *********
     #origin = "C:\Users\Sæmundur\Desktop\dest\"
@@ -41,11 +40,11 @@ def main():
     fileListTitled    = titleFilename(fileListSpaced)
     fileListRomanized = romanNumCap(fileListTitled)
     fileListNoEndings = stripFilename(fileListRomanized)
+    for f in fileListNoEndings:
+        add_file_to_dest(f, origin, dest)  
     
     todo = [i for i in fileListNoEndings if not search(r'.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
     return todo
-    # for f in fileListNoEndings:
-    #     add_file_to_dest(f, origin, dest)  
     return fileListNoEndings
 
 
