@@ -105,6 +105,7 @@ def seasonFixer(fileDirLis):
 
     # """ New version """
     filteredList = []
+    count = 0
     for i in fileDirLis:
         if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
@@ -112,7 +113,7 @@ def seasonFixer(fileDirLis):
                 if int(se[1]) > 1900:
                     filteredList.append(i)
                 else:
-                    eval("40/0") #here we devide by zero, for comedic effect
+                    eval('420/0') #here we devide by zero, for comedic effect
             except:
                 if se:
                     SeriesString = 'S'
@@ -120,8 +121,11 @@ def seasonFixer(fileDirLis):
                         SeriesString+=epse+'E'
                     SeriesString = SeriesString[:-1]
                     filteredList.append(i[:-1] + (sub(se[1],SeriesString,i[-1],1),))
+                else:
+                    filteredList.append(i)
         else:
             filteredList.append(i)
+    print(count)
     return filteredList
 
 
