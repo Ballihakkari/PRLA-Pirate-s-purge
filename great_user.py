@@ -53,18 +53,6 @@ async def great_user():
             print("\nIs this your destination folder?\t[" + destination + "]")
             destination_cont = input("If this is your folder enter 'y': ")
 
-        #Asks user for settings preferences
-        while settings_cont.lower() != 'y':
-            #TODO
-            #settings ideas
-                #abort
-                #put all .pdf in a folder together
-                #don't delete empty directories
-            new_screen(origin, destination)
-            input("There are no settings currently. Press enter to continue")
-            settings_cont = "y"
-        new_screen(origin, destination)
-
         #Overview and confermation before exicution
         print("\n\n\n\n\nTo change the origin folder of your files enter 'o'")
         print("To change the destination folder of your files enter 'd'")
@@ -76,8 +64,6 @@ async def great_user():
             origin_cont = ""
         elif exicute.lower() == 'd':
             destination_cont = ""
-        elif exicute.lower() == 's':
-            settings_cont = ""
         else:
             cont = False
             
