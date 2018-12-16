@@ -34,10 +34,11 @@ Destination
 		  - ...
 	  - ...
 ```
-Where all the files have been renamed and cleaned with the execution of the miscellaneous files which have only been partially cleaned [_i.e. striped of symbols an titled_] for easier manual review after the script has been run.  The script will also move all folders which contained video files to a "Delete me" folder in the origin directory.
+Where all the files have been renamed and cleaned with the execution of the miscellaneous files which have only been partially cleaned [_i.e. striped of symbols an titled_] for easier manual review after the script has been run.
 
 ##### Know issues:
 * The script can not distinguish between an miscellaneous video file and a movie without a release date  in the title which will be classified as miscellaneous files in the destination directory. 
-* **The scrip will move folders to the "delete me" in origin even if it is not empty!** 
-	* although in most cases it will only include subtitles, cover images and information files.
 * The script will move Specials and Extras into Misc instead of the correct folder
+* The script has only been tested on Windows 10
+* The script may not move files if it's path's langth exceeds 260 charecters
+* The script will not remove folders which contained originally contained the desired files  
