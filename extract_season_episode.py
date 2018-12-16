@@ -3,7 +3,7 @@
 #Returns season and episode of file formated as:
 #('01', '01')
 import re
-from regexfolders import regexes
+from regex_folders import regexes
 from roman_to_arabic import roman_to_arabic
 def extract_season_episode(input):
     y = []

@@ -4,12 +4,12 @@ from regex_folders import regexes
 from filter_season import filter_season as filterSE
 from great_user import great_user
 from add_file_to_dest import add_file_to_dest
-import asyncio, sys, argparse, os
 from filter_functions import *
+import asyncio, sys, argparse, os
 
 def main():
-    origin = "C:\\Users\\Sæmundur\\Desktop\\downloads"
-    dest = "C:\\Users\\Sæmundur\\Desktop\\dest"
+    origin = "Test Data/downoads"
+    dest = "Test Data/videos"
     if len(sys.argv) > 2 and  os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
         origin = sys.argv[1]
         dest = sys.argv[2]
