@@ -2,22 +2,22 @@ from pathlib import Path
 from re import match, search, sub, findall
 from regexfolders import regexes
 from filterSeason import filter_Season as filterSE
-from great_user import great_user
+# from great_user import great_user
 from add_file_to_dest import add_file_to_dest
 import asyncio, sys, argparse, os
 
 def main():
-    origin = ""
+    origin = "Test Data/downloads"
     dest = ""
-    if len(sys.argv) > 2 and  os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
-        origin = sys.argv[1]
-        dest = sys.argv[2]
-        print(origin + "\n" + dest)
-    else:        
-        user_input = asyncio.run(great_user())   #Returns tuple(origin, destination, settings)
-        origin = user_input[0]     
-        dest = user_input[1]       
-        # settings = user_input[2]
+    # if len(sys.argv) > 2 and  os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
+    #     origin = sys.argv[1]
+    #     dest = sys.argv[2]
+    #     print(origin + "\n" + dest)
+    # else:        
+    #     user_input = asyncio.run(great_user())   #Returns tuple(origin, destination, settings)
+    #     origin = user_input[0]     
+    #     dest = user_input[1]       
+    #     # settings = user_input[2]
 
     fileDirList       = getFileDirList(origin)
     filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
@@ -31,12 +31,13 @@ def main():
     fileListTitled    = titleFilename(fileListSpaced)
     fileListRomanized = romanNumCap(fileListTitled)
     fileListNoEndings = stripFilename(fileListRomanized)
-    for f in fileListNoEndings:
-        add_file_to_dest(f, origin, dest)  
+    # for f in fileListNoEndings:
+    #     add_file_to_dest(f, origin, dest)  
     
+    return fileListNoEndings
     todo = [i for i in fileListNoEndings if not search(r'.+S\d\dE\d\d',i[-1]) and not search(regexes['realease_year'],i[-1])]
     return todo
-    return fileListNoEndings
+    
 
 
 
@@ -68,21 +69,16 @@ def sybolStripFilename(fileDirList):
     return filtredList
 
 
-def stripFilename(fileDirList): # TODO: Fix... 
-    # filteredList = []
-    # for i in fileDirList:
-    #     if search(r'S\d{2}E\d{2}',i[-1]):
-    #         filteredList.append(i[:-1] + (sub(r'(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(regexes['realease_year'],'',i[-1])),))
-    #     else:
-    #         filteredList.append(i[:-1] + (sub(r'(?<=\)) .+(?=\.)','',i[-1]),))
-    # return filteredList
+def stripFilename(fileDirList):
     filteredList = []
     for i in fileDirList:
-        if search(r'S\d{2}E\d{2}(?= )',i[-1]):
-            # filteredList.append(i[:-1] + (sub('(?:S\d{2}(E\d{2})+[^ ]*) .+(?=\.)','\g<0>',sub(' \(\d{4}\)','',i[-1])),)) # ToDo
+        if search(r'S\d{2}E\d{2} ',i[-1]):
             filteredList.append(i[:-1] + (sub(r'(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
-        elif search(r'S\d{2}E\d{2}',i[-1]):
-            filteredList.append(i[:-1] + (sub(r'(?<=S\d{2}E\d{2}) .+(?=\.)','',sub(' \(\d{4}\)','',i[-1])),))
+        elif search(r'S\d{2}E\d{2}[^ ]+ ',i[-1]):
+            fileParts = i[-1].rsplit('.', 1)
+            seEp = search('S\d{2}E\d{2}[^ ]+(?= )', i[-1]).group(0)
+            newName = sub(r'(?:S\d{2}E\d{2}[^ ]+ ).+$','',sub(' \(\d{4}\)','',fileParts[0])) + seEp + '.' + fileParts[1]
+            filteredList.append(i[:-1] + (newName,))
         else:
             filteredList.append(i[:-1] + (sub(r'(?<=\)) .+(?=\.)','',i[-1]),))
     return filteredList
@@ -332,11 +328,11 @@ def romanNumCap(fileDirLis):
     return filteredList
 
 
-main()
+# main()
 # count = 0
 # for i in main():
 #     print(i)
-#     print(filterSE(i[-1]))
+#     # print(filterSE(i[-1]))
 #     count += 1    
 #     if not count % 40:
 #         input()
