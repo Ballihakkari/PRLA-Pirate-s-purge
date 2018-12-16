@@ -5,15 +5,23 @@ import os
 def name_guarantee(name):
     i = 1
     temp_name = name
+    if os.path.exists(temp_name):
+        print("++++++++++++++++++++++++++++PATH IS TAKEN++++++++++++++++++++++++++++")
+    else:
+        print("============================PATH IS NOT TAKEN============================")
+        print(temp_name)
     while os.path.exists(temp_name):
         i += 1
-        temp_name = name
-        temp_name / Path("(" + str(i) + ")")
-    return temp_name
+        temp_name = str(name)
+        idx = temp_name.index('.')
+        temp_name = Path(temp_name[:idx] + str("(" + str(i) + ")") + temp_name[idx:])
+    print("Printing from name_guarantee  -  temp_name: " + str(temp_name))
+    return os.path.basename(os.path.normpath(temp_name))
         
 
 #file_info(path_part1/path_part2/path_part3/path_part4/.../new_name)
 def add_file_to_dest(file_info, origin, destination):
+    print("Printing from top of add_file  -  adding: " + str(file_info[-1]))
     file_location = Path(origin)
     file_name = file_info[-1]
     for n in range(len(file_info) - 1):  #-1 since the last index is new file name
@@ -24,19 +32,28 @@ def add_file_to_dest(file_info, origin, destination):
     
     if show_regex.search(file_name):
         series = Path((str((re.search(r'[^(S\d{2}E\d{2})]*', file_name).group(0))).strip()))
+        
         season = Path(("Season " + str(re.search(r'(?<=S)(\d{2})', file_name).group(0))).strip())
-        target_dir = destination / Path("TV Shows") / series / season
-        if not target_dir.is_dir():
-            Path(target_dir).mkdir(parents=True, exist_ok=True)
-        #TODO laga error "FileExistsError: [WinError 183] Cannot create a file when that file already exists:"
-        file_name = name_guarantee(file_name)
-        os.rename(file_location, target_dir / file_name)
+        if str(series) == ".": #Unable to extract series name
+            print("if statment went through")
+            misc_dir = destination / Path("Miscellaneous")
+            if not misc_dir.is_dir():
+                Path(misc_dir).mkdir(parents=True, exist_ok=True)
+            file_name = name_guarantee(misc_dir /file_name)
+            os.rename(file_location, misc_dir / file_name)
+        else:
+            print("if statment did not go through")
+            target_dir = destination / Path("TV Shows") / series / season
+            if not target_dir.is_dir():
+                Path(target_dir).mkdir(parents=True, exist_ok=True)
+            file_name = name_guarantee(target_dir / file_name)
+            os.rename(file_location, target_dir / file_name)
 
     elif movie_regex.search(file_name):
         movies_dir = destination / Path("Movies")
         if not movies_dir.is_dir():
             Path(movies_dir).mkdir(parents=True, exist_ok=True)
-        file_name = name_guarantee(file_name)
+        file_name = name_guarantee(movies_dir / file_name)
         os.rename(file_location, movies_dir / file_name)
 
     else:
