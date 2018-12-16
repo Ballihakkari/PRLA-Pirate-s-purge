@@ -18,15 +18,6 @@ def main():
         origin = user_input[0]     
         dest = user_input[1]       
         # settings = user_input[2]
-    
-    # Will be user inputed: *********
-    #origin = "C:\Users\Sæmundur\Desktop\dest\"
-    #dest = "C:\Users\Sæmundur\Desktop\downloads\"
-    #origin = "C:\Users\Sæmundur\Desktop\dest\"
-    #dest = "C:\Users\Sæmundur\Desktop\downloads\"
-
-    #*******************************
-
 
     fileDirList       = getFileDirList(origin)
     filePartsList     = [i.parts + (i.parts[-1],) for i in fileDirList]
@@ -324,52 +315,6 @@ def buildFilename(fileDirList):
             filteredList.append(i)
     return filteredList
 
-def oldBuildFilename():
-    return None
-    # ***********************************************************************************************************************************************************************************
-    # ***********************************************************************************************************************************************************************************
-    #  filteredList = []
-    #     for i in fileDirList:
-    #         fileParts = i[-1].rsplit('.',1)
-    #         m = match(regexes['num_no_space'],i[-1]) 
-    #         if m:
-    #             if len(m.group(0)) < 3 and search(regexes['num_no_space'],i[-3]):
-    #                 if len(i) > 3:
-    #                     filteredList.append(i[:-1] + (i[-4]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-    #                 elif len(i) > 2 :# and search(regexes['num_no_space'],i[-3]):
-    #                     filteredList.append(i[:-1] + ('S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-    #                 else:
-    #                     filteredList.append(i)
-                        
-    #             elif len(m.group(0)) == 3 and len(i) > 2:
-    #                 if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-    #                     filteredList.append(i[:-1] + (i[-4]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
-    #                 else:
-    #                     filteredList.append(i[:-1] + (i[-3]+' S0'+i[-1][0]+'E'+i[-1][1:2].zfill(2),))
-    #             elif len(m.group(0)) == 4:
-    #                 if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-    #                     filteredList.append(i[:-1] + (i[-4]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
-    #                 else:
-    #                     filteredList.append(i[:-1] + (i[-3]+' S'+i[-1][0:1].zfill(2)+'E'+i[-1][2:3].zfill(2),))
-    #             else:
-    #                 filteredList.append(i)
-    #         elif match(regexes['usual_series_format'],i[-1]) and len(i) > 2 :
-    #             if (match('[Ss].+ ?\d',i[-3]) or match('\d{1,2}\.? ?[Ss]',i[-3])) and len(i) > 3:
-    #                 filteredList.append(i[:-1] + (i[-4]+' '+i[-1],))
-    #             else:
-    #                 filteredList.append(i[:-1] + (i[-3]+' '+i[-1],))
-    #         elif match('[Ee]?([Pp][Ii][Ss][Oo][Dd][Ee])? ?\d',fileParts[0]) and len(i) > 3:
-    #             if search(regexes['num_no_space'],i[-3]):
-    #                 filteredList.append(i[:-1] + (i[-3]+' S'+search(regexes['num_no_space'],i[-3]).group(0).zfill(2)+'E'+fileParts[0].zfill(2)+'.'+fileParts[1],))
-    #         else:
-    #             filteredList.append(i)
-    #     return filteredList
-    # ***********************************************************************************************************************************************************************************
-    # ***********************************************************************************************************************************************************************************
-
-
-
-
 def yearBrackedizer(fileDirList):
     return [regExReplace('(?<= )(19|20)\d{2}',r'(\g<0>)',i) for i in fileDirList]
 
@@ -387,7 +332,7 @@ def romanNumCap(fileDirLis):
     return filteredList
 
 
-# main()
+main()
 # count = 0
 # for i in main():
 #     print(i)
