@@ -88,21 +88,24 @@ def titleFilename(fileDirList):
         fileParts = i[-1].rsplit('.',1)
         filteredList.append(i[:-1] + (fileParts[0].title()+'.'+fileParts[-1].lower(),))
     return filteredList
+      
+    
 
 def seasonFixer(fileDirLis):
     # """" Old version """
-    # filteredList = []
-    # for i in fileDirLis:
-    #     if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-    #         se = filterSE(i)
-    #         if se is not None:
-    #             # print(se)
-    #             filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0]+'E'+se[0][1],i[-1],1),))
-    #         else:
-    #             filteredList.append(i)
-    #     else:
-    #         filteredList.append(i)
-    # return filteredList
+    filteredList = []
+    for i in fileDirLis:
+        if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
+            se = filterSE(i)
+            if se is not None:
+                # print(se)
+                filteredList.append(i[:-1] + (sub('(^| )[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?=[ \.])','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
+                # filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
+            else:
+                filteredList.append(i)
+        else:
+            filteredList.append(i)
+    return filteredList
 
     # """ New version """
     filteredList = []
@@ -265,6 +268,7 @@ def buildFilename(fileDirList):
                         # print("File Handled 18: ", i[:-1] + (sub(number, ('S' + number[:2] + 'E' + number[2:]), i[-1]),))
                         filteredList.append(i)
                 else:
+                    # TODO: Extras, Specials etc.
                     # print("Not Handled 19: ", i)
                     filteredList.append(i)    
             elif dirDepth > 2:
@@ -356,14 +360,23 @@ def yearBrackedizer(fileDirList):
 
 
 def romanNumCap(fileDirLis):
-    return fileDirLis
     # return [regExReplace('(?<= )[IiVvXxCcLlDdMm]+(?= )', '\g<0>'.upper(), i) for i in fileDirLis]
+    filteredList = []
+    for i in fileDirLis:
+        hasRomanNum = search('(?<= )[IiVvXxCcLlDdMm]+(?= )', i[-1])
+        if hasRomanNum is not None:
+            num = hasRomanNum.group(0)
+            filteredList.append(i[:-1] + (sub(num, num.upper(), i[-1]),))
+        else:
+            filteredList.append(i)
+    return filteredList
 
 
 # main()
 count = 0
 for i in main():
     print(i)
+    print(filterSE(i))
     count += 1    
     if not count % 40:
         input()
