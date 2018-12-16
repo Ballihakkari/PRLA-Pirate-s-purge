@@ -96,7 +96,8 @@ def seasonFixer(fileDirLis):
     #     if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
     #         se = filterSE(i)
     #         if se is not None:
-    #             filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+    #             # print(se)
+    #             filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0]+'E'+se[0][1],i[-1],1),))
     #         else:
     #             filteredList.append(i)
     #     else:
@@ -105,7 +106,7 @@ def seasonFixer(fileDirLis):
 
     # """ New version """
     filteredList = []
-    count = 0
+    # count = 0
     for i in fileDirLis:
         if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
             se = filterSE(i)
@@ -124,8 +125,9 @@ def seasonFixer(fileDirLis):
                 else:
                     filteredList.append(i)
         else:
+            # print("Not Fixed: ", i)
             filteredList.append(i)
-    print(count)
+    # print(count)
     return filteredList
 
 
@@ -232,10 +234,12 @@ def buildFilename(fileDirList):
         
     # """ If the name (might) contains an episode """
         elif isSeasoned is None:
+            hasEpisode = pathSegmentEpisodeSearch(i[-1])
+            hasSeason  = pathSegmentSeasonSearch(i[-1])
+            hasNumbers = search('(?<= )\d{3,4}(?=[ \.])', i[-1])
             if dirDepth > 3:
-                hasEpisode = pathSegmentEpisodeSearch(i[-1])
-                hasSeason  = pathSegmentSeasonSearch(i[-1])
                 parentHasSeason = pathSegmentSeasonSearch(i[-3])
+                grandParentHasSeason = pathSegmentSeasonSearch(i[-4])
                 if hasEpisode is not None:
                     epidodeNr = __extractNumbersFromSearch__(hasEpisode)
                     if hasSeason is not None:
@@ -243,51 +247,60 @@ def buildFilename(fileDirList):
                         filteredList.append(i[:-1] + (sub(hasSeason.group(0), ' S' + seasonNr + 'E' + epidodeNr, i[-1]),))
                         # print("File Handled 13: ", i[:-1] + (i[:-1] + (sub(hasSeason.group(0), ' S' + seasonNr + 'E' + epidodeNr, i[-1]),)))
                     elif parentHasSeason is not None:
-                        print(parentHasSeason.group())
                         print("Not Handled 14: ", i)
                         filteredList.append(i)
+                    elif grandParentHasSeason is not None:
+                        seasonNr = __extractNumbersFromSearch__(grandParentHasSeason)
+                        filteredList.append(i[:-1] + (sub(grandParentHasSeason.group(0), ' S' + seasonNr, i[-4]) +  sub(hasEpisode.group(0), 'E' + epidodeNr, i[-1]),))
+                        # print("File Handled 15: ", (sub(grandParentHasSeason.group(0), ' S' + seasonNr, i[-4]) +  sub(hasEpisode.group(0), 'E' + epidodeNr, i[-1]),))
                     else:
-                        grandParentHasSeason = pathSegmentSeasonSearch(i[-4])
-                        if grandParentHasSeason is not None:
-                            seasonNr = __extractNumbersFromSearch__(grandParentHasSeason)
-                            filteredList.append(i[:-1] + (sub(grandParentHasSeason.group(0), ' S' + seasonNr, i[-4]) +  sub(hasEpisode.group(0), 'E' + epidodeNr, i[-1]),))
-                            # print("File Handled 15: ", (sub(grandParentHasSeason.group(0), ' S' + seasonNr, i[-4]) +  sub(hasEpisode.group(0), 'E' + epidodeNr, i[-1]),))
-                        else:
-                            print("Not Handled 16: ", i)
-                            filteredList.append(i)
+                        print("Not Handled 16: ", i)
+                        filteredList.append(i)
+                elif hasNumbers is not None:
+                    number = hasNumbers.group(0)
+                    if len(number) < 4:
+                        # print("File Handled 17: ", i[:-1] + (sub(number, ('S0' + number[0] + 'E' + number[1:]), i[-1]),))
+                        filteredList.append(i[:-1] + (sub(number, ('S0' + number[0] + 'E' + number[1:]), i[-1]),))
+                    else:
+                        # print("File Handled 18: ", i[:-1] + (sub(number, ('S' + number[:2] + 'E' + number[2:]), i[-1]),))
+                        filteredList.append(i)
                 else:
-                    # print("Not Handled 17: ", i) # TODO: these are all file in format <NAME> numbers <Optional data>
+                    # print("Not Handled 19: ", i)
                     filteredList.append(i)    
             elif dirDepth > 2:
                 # Files locaded in a folder directly below The ORIGIN folder
                 # without a discernable season nr. 
                 # the parent folder will be searched for a title and season nr.
-                if search(' \d{3,4} ', i[-1]):
-                    # print("Not Handled 18: ", i) # Note: are simple enough to be handled by season fixer
-                    filteredList.append(i)    
+                if hasNumbers is not None:
+                    number = hasNumbers.group(0)
+                    if len(number) < 4:
+                        # print("File Handled 20: ", i[:-1] + (sub(number, ('S0' + number[0] + 'E' + number[1:]), i[-1]),))
+                        filteredList.append(i[:-1] + (sub(number, ('S0' + number[0] + 'E' + number[1:]), i[-1]),))
+                    else:
+                        print("Not Handled 21: ", i) # Note: are simple enough to be handled by season fixer
+                        filteredList.append(i)
                 else:
                     parentHasSeason = pathSegmentSeasonSearch(i[-3])
                     if parentHasSeason:
                         seasonNr = __extractNumbersFromSearch__(parentHasSeason)
-                        # print("Not Handled 19: ", i[:-1] + (sub(parentHasSeason.group(0),' ', i[-3]) + i[-1],)) :TODO
-                        
-                        filteredList.append(i[:-1] + (sub(parentHasSeason.group(0),' ', i[-3]) + i[-1],))
+                        # print("File Handled 22: ", i[:-1] + (sub('(?<= )\d{2}(?=[ \.])','S' + seasonNr + 'E' + '\g<0>', i[-1]),))
+                        filteredList.append(i[:-1] + (sub('(?<= )\d{2}(?=[ \.])','S' + seasonNr + 'E' + '\g<0>', i[-1]),))
                     else:
                         # Files without a discernable season nr.
                         # in the parent folder 
                         # - Are most likely movies
                         if search('\(\d{4}\)', i[-1]) is None:
-                            # print("Not Handled 20: ", i)
+                            # print("Not Handled 23: ", i)
                             pass
                         filteredList.append(i)
             else:
                 # Files locaded directly in The ORIGIN folder
-                # print("Not Handled 21: ", i)
+                # print("Not Handled 24: ", i)
                 filteredList.append(i)
             
         else:
             if (search('[Ss]*\d{1,2}[EeXx]\d{1,2}', i[-1]) is None) and (search('(\d{4})', i[-1]) is None):
-                # print(i)
+                # print("Not Handled 25: ", i)
                 pass
             filteredList.append(i)
     return filteredList
@@ -348,13 +361,13 @@ def romanNumCap(fileDirLis):
 
 
 # main()
-# count = 0
-# for i in main():
-#     print(i)
-#     count += 1    
-#     if not count % 40:
-#         input()
-# print(count)
+count = 0
+for i in main():
+    print(i)
+    count += 1    
+    if not count % 40:
+        input()
+print(count)
 
 
 step_1 = getFileDirList("Test Data/downloads")

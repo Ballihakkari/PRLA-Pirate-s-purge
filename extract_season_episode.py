@@ -48,7 +48,7 @@ def extract_season_episode(input):
         if len(y[i]) == 1:
             y[i] = '0' + y[i]
     if len(y) >= 2:
-        print(y,input)
+        # print(y,input)
         return(y,input)
     else: 
         return None
