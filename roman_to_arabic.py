@@ -7,14 +7,12 @@ def roman_to_arabic(roman_number):
                  'D' : 500,
                  'M' : 1000}
     sumofall = 0
-    sumofdoubles = 0
     for n,i in enumerate(roman_number):
         try:
-            if roman_val[i] < roman_val[roman_number[n+1]]:
+            if roman_val[i] < roman_val[roman_number[n+1]]: #if the next number is larger than the current number we subract the current number from the sum
                 sumofall -= roman_val[i]
-                sumofdoubles
-            else:
+            else:                                           #else we add it to the sum
                 sumofall += roman_val[i]
-        except IndexError:
-            sumofall += roman_val[i]
+        except IndexError:#This happens when we compare the last number of the list to the current number 
+            sumofall += roman_val[i] 
     return sumofall
