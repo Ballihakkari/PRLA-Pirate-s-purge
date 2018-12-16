@@ -4,30 +4,53 @@ from regex_folders import regexes
 from filter_season import filter_season as filterSE
 
 def getFileDirList(origin):
-    """Input is a path, the return value is a list of paths to all movie files"""
-
+    """
+    Input is a path, the return value is a list of paths to all movie files
+    
+    :param str origin: A string containg the path to the origin directory
+    :rtype: list(Path)
+    """
     fileExtentionWhitelist = ['.avi', '.flv', '.mkv', '.mp4', '.mov', '.wmv'] #The suffixes for video/movie files
     return [i.relative_to(origin) for i in Path(origin).glob('**/*') if i.suffix.lower() in fileExtentionWhitelist]
 
 
 def regExReplace(regExString, replacementString, pathParts):
-    """Regex sub but it does not temper with the string suffix"""
+    """
+    Regex sub but it does not temper with the string suffix
+    
+    :param str regExString: A reg ex string to replace
+    :param str replacementString: The replacement string 
+    :param list pathParts: The parts of a pathlib Path
+    :rtype: list(Path.parts)
+    """
     fileParts = pathParts[-1].rsplit('.',1)
     return pathParts[:-1] + (sub(regExString, replacementString, fileParts[0]) + '.' + fileParts[1],)
 
 #URL's should not be in the final title of our movies/episodes, ( removing all proof of downloading is important)
 def urlStripFilename(fileDirList):
-    """Takes in a list of paths to movies returns a list of movies with url removed from filenames"""
+    """
+    Takes in a list of paths to movies returns a list of movies with url removed from filenames
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     return [regExReplace(regexes['url_detector'], '', i) for i in fileDirList]
 
 #Sample filter takes in a list of movies excludes all paths that have the name
 def sapleFilter(fileDirList):
-    """Sample filter takes in a list of movies excludes all paths that have the name"""
+    """
+    Sample filter takes in a list of movies excludes all paths that have the name
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     return [i for i in fileDirList if len([j for j in i if search(regexes['sample'], j)]) == 0]
 
 #Takes away most symboles and replaces them with space to make the title cleaner
 def sybolStripFilename(fileDirList):
-    """Takes away most symboles and replaces them with space to make the title cleaner"""
+    """
+    Takes away most symboles and replaces them with space to make the title cleaner
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filtredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
@@ -35,7 +58,11 @@ def sybolStripFilename(fileDirList):
     return filtredList
 
 def stripFilename(fileDirList): 
-    """strips away everything that is behind a calender year or season/episode name"""
+    """
+    strips away everything that is behind a calender year or season/episode name
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filteredList = []
     for i in fileDirList:
         if search(r'S\d{2}E\d{2} ',i[-1]):
@@ -51,7 +78,11 @@ def stripFilename(fileDirList):
 
 
 def titleFilename(fileDirList):
-    """Sets the first letter of each word to a capital letter while lowering all other characters"""
+    """
+    Sets the first letter of each word to a capital letter while lowering all other characters
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
@@ -61,7 +92,11 @@ def titleFilename(fileDirList):
     
 
 def seasonFixer(fileDirLis):
-    """ New version """
+    """ 
+    Sets the format of Season/Episode cluster to S00E00 
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filteredList = []
     # count = 0
     for i in fileDirLis:
@@ -89,9 +124,13 @@ def seasonFixer(fileDirLis):
 
 
 def seasonSpacer(fileDirList):
+    """
+    Makes sure that there is a space around the Season/Episode cluster
+
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     return [i[:-1] + (sub(r'(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',r' \g<0>', i[-1]),) for i in fileDirList]
-    # filteredList = [i[:-1] + (sub('(?<=[^ ])[Ss]\d{2}[Ee]\d{2}(?= )',' \g<0>', i[-1]),) for i in fileDirList]
-    # return [i[:-1] + (sub('(?<= )[Ss]\d{2}[Ee]\d{2}(?=[^ ])','\g<0> ', i[-1]),) for i in filteredList]
 
 
 def pathSegmentSeasonSearch(pathSegment):
@@ -103,6 +142,13 @@ def __extractNumbersFromSearch__(string):
     return search(r'\d{1,2}', string.group(0)).group(0).zfill(2)
 
 def buildFilename(fileDirList):
+    """
+    Contructs the the filename for shows with missing Season/Episode infornation
+    from it's folder names in it's path
+
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filteredList = []
     for i in fileDirList:
         dirDepth = len(i)
@@ -264,11 +310,22 @@ def buildFilename(fileDirList):
     return filteredList
 
 def yearBrackedizer(fileDirList):
+    """
+    Envelops years into brakets ()
+
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     return [regExReplace('(?<= )(19|20)\d{2}',r'(\g<0>)',i) for i in fileDirList]
 
 
 def romanNumCap(fileDirLis):
-    # return [regExReplace('(?<= )[IiVvXxCcLlDdMm]+(?= )', '\g<0>'.upper(), i) for i in fileDirLis]
+    """
+    Capilizises romen numerals in names
+
+    :param list(Path.parts) fileDirList:
+    :rtype: list(Path.parts)
+    """
     filteredList = []
     for i in fileDirLis:
         hasRomanNum = search('(?<= )[IiVvXxCcLlDdMm]+(?= )', i[-1])
