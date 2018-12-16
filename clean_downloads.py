@@ -8,8 +8,8 @@ from filter_functions import *
 import asyncio, sys, argparse, os
 
 def main():
-    origin = "Test Data/downoads"
-    dest = "Test Data/videos"
+    origin = ""
+    dest = ""
     if len(sys.argv) > 2 and  os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
         origin = sys.argv[1]
         dest = sys.argv[2]
