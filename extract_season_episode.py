@@ -7,7 +7,6 @@ from regexfolders import regexes
 from roman_to_arabic import roman_to_arabic
 def extract_season_episode(input):
     y = []
-    print(input)
     if type(input) != str:
         for n,i in enumerate(input):
             if not i[1].isdigit():
