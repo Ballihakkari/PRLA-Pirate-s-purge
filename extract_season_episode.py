@@ -7,6 +7,7 @@ from regexfolders import regexes
 from roman_to_arabic import roman_to_arabic
 def extract_season_episode(input):
     y = []
+    print(input)
     if type(input) != str:
         for n,i in enumerate(input):
             if not i[1].isdigit():
@@ -48,7 +49,6 @@ def extract_season_episode(input):
         if len(y[i]) == 1:
             y[i] = '0' + y[i]
     if len(y) >= 2:
-        print(y,input)
         return(y,input)
     else: 
         return None

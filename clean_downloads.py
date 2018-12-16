@@ -94,38 +94,39 @@ def seasonFixer(fileDirLis):
     # filteredList = []
     # for i in fileDirLis:
     #     if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-    #         se = filterSE(i)
+    #         se = filterSE(i[-1])
     #         if se is not None:
-    #             filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0]+'E'+se[1],i[-1],1),))
+    #             filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0]+'E'+se[0][1],i[-1],1),))
     #         else:
     #             filteredList.append(i)
     #     else:
     #         filteredList.append(i)
     # return filteredList
 
-    # """ New version """
+    """ New version """
     filteredList = []
     count = 0
     for i in fileDirLis:
-        if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-            se = filterSE(i)
-            try:
-                if int(se[1]) > 1900:
-                    filteredList.append(i)
-                else:
-                    eval('420/0') #here we devide by zero, for comedic effect
-            except:
-                if se:
-                    SeriesString = 'S'
-                    for epse in se[0]:
-                        SeriesString+=epse+'E'
-                    SeriesString = SeriesString[:-1]
-                    filteredList.append(i[:-1] + (sub(se[1],SeriesString,i[-1],1),))
-                else:
-                    filteredList.append(i)
-        else:
-            filteredList.append(i)
-    print(count)
+        se = filterSE(i[-1])
+        try:
+            if int(se[1]) > 1900:
+                filteredList.append(i)
+            else:
+                eval('420/0') #here we devide by zero, for comedic effect
+        except:
+            if se:
+                SeriesString = 'S'
+                for epse in se[0]:
+                    SeriesString+=epse+'E'
+                SeriesString = SeriesString[:-1]
+                i = list(i)
+                print(i)
+                print(se[1])
+                i[-1] = sub(se[1], SeriesString, i[-1], 1)
+                print(i)
+                filteredList.append(tuple(i))
+            else:
+                filteredList.append(i)
     return filteredList
 
 
@@ -348,36 +349,36 @@ def romanNumCap(fileDirLis):
 
 
 # main()
-# count = 0
-# for i in main():
-#     print(i)
-#     count += 1    
-#     if not count % 40:
-#         input()
-# print(count)
+count = 0
+for i in main():
+    print(i)
+    count += 1    
+    if not count % 40:
+        input()
+print(count)
 
 
-step_1 = getFileDirList("Test Data/downloads")
-print("S1: ", len(step_1))
-step_2 = [i.parts + (i.parts[-1],) for i in step_1]
-print("S2: ", len(step_2))
-step_3 = sapleFilter(step_2)
-print("S3: ", len(step_3))
-step_4 = urlStripFilename(step_3)
-print("S4: ", len(step_4))
-step_5 = sybolStripFilename(step_4)
-print("S5: ", len(step_5))
-step_6 = yearBrackedizer(step_5)
-print("S6: ", len(step_6))
-step_7 = buildFilename(step_6)
-print("S7: ", len(step_7))
-step_8 = seasonFixer(step_7)
-print("S8: ", len(step_8))
-step_9 = seasonSpacer(step_8)
-print("S9: ", len(step_9))
-step_10 = titleFilename(step_9)
-print("S10: ", len(step_10))
-step_10 = stripFilename(step_10)
-print("S10: ", len(step_10))
-total = {i[-1] for i in step_10}
-print("Total: ", len(total))
+# step_1 = getFileDirList("Test Data/downloads")
+# print("S1: ", len(step_1))
+# step_2 = [i.parts + (i.parts[-1],) for i in step_1]
+# print("S2: ", len(step_2))
+# step_3 = sapleFilter(step_2)
+# print("S3: ", len(step_3))
+# step_4 = urlStripFilename(step_3)
+# print("S4: ", len(step_4))
+# step_5 = sybolStripFilename(step_4)
+# print("S5: ", len(step_5))
+# step_6 = yearBrackedizer(step_5)
+# print("S6: ", len(step_6))
+# step_7 = buildFilename(step_6)
+# print("S7: ", len(step_7))
+# step_8 = seasonFixer(step_7)
+# print("S8: ", len(step_8))
+# step_9 = seasonSpacer(step_8)
+# print("S9: ", len(step_9))
+# step_10 = titleFilename(step_9)
+# print("S10: ", len(step_10))
+# step_10 = stripFilename(step_10)
+# print("S10: ", len(step_10))
+# total = {i[-1] for i in step_10}
+# print("Total: ", len(total))
