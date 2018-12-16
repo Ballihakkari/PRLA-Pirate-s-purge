@@ -1,5 +1,7 @@
-import re, os
+import re, os, shutil
 from pathlib import Path
+import filter_functions
+from filter_functions import *
 
 def name_guarantee(name, file_location):
     i = 1
@@ -12,9 +14,8 @@ def name_guarantee(name, file_location):
 
     try:
         os.rename(file_location, temp_name)
-    except:
-        print("ERROR: Unable to move file: " + str(file_location))    
-        print("Path likly too long")    
+    except Exception as e:
+        print(e)
 
 #file_info(path_part1/path_part2/path_part3/path_part4/.../new_name)
 def add_file_to_dest(file_info, origin, destination):
@@ -50,4 +51,25 @@ def add_file_to_dest(file_info, origin, destination):
         if not misc_dir.is_dir():
             Path(misc_dir).mkdir(parents=True, exist_ok=True)
         name_guarantee(misc_dir / file_name, file_location)
+
+    # try:
+    #     f = file_location
+    #     while str(f.parents[1]) != str(origin):  
+    #         f = f.parent                #f.parent will be the top dir we want to move 
+    #     #print(f)
+
+    #     fileDirList       = getFileDirList(f)
+    #     filePartsList     = [i.parts for i in fileDirList]
+    #     fileListNoSamples = sapleFilter(filePartsList)
+
+    #     if len(fileListNoSamples) == 0: #There are zero files in this dir that are wanted
+    #         src = f
+    #         dst = destination / Path("Delete me")
+
+    #         #def copytree(src, dst, symlinks=False, ignore=None):
+    #         #print("f.parents: " + str(f))
+    #         shutil.move(src, dst)
+
+    # except Exception as e:
+    #     print(e)
     return None

@@ -7,18 +7,18 @@ from regexfolders import regexes
 from roman_to_arabic import roman_to_arabic
 def extract_season_episode(input):
     y = []
-    if type(input) != str:
-        for n,i in enumerate(input):
-            if not i[1].isdigit():
-                y.append(str(roman_to_arabic(i[1])))
+    if type(input) != str: #If the input is not a string then it is a list
+        for n,i in enumerate(input):#only input that is not a string is if it includes roman numerals or has Season/Episode instead of S and E
+            if not i[1].isdigit(): #if the latter number not a digit ( The prior will always be the string Season/Episode) then we know it is a roman numeral
+                y.append(str(roman_to_arabic(i[1]))) #We convert it to arabic base 10
             else:
-                y.append(str(i[1]))
-            input[n] = " ".join(i)
+                y.append(str(i[1])) #Else it is a decimal and we append it
+            input[n] = " ".join(i) 
         input = " ".join(input)
-    else:
+    else: #Now it is a string
         s = input
         s = str(s).lower()
-        s = re.sub(" ", "", s)
+        s = re.sub(" ", "", s) 
         if 'e' in s:
             y = s.split("e")
             y[0] = y[0].replace("s", "")
@@ -26,8 +26,9 @@ def extract_season_episode(input):
             y = s.split("x")
         elif re.search(regexes['series_and_episode_split_on_dot'], s):
             y = s[1:-1].split('.')
-        else:
-            if re.search(r'\d{4}', s):
+        else: #here we are extracting the Season and episode count from the input string
+              #into the format ( SeasonNumber, EpisodeNumber ) 
+            if re.search(r'\d{4}', s): 
                 x = re.search(r'\d{4}',s).group()
                 y.append(x[0:2])
                 y.append(x[2:])
@@ -48,6 +49,6 @@ def extract_season_episode(input):
         if len(y[i]) == 1:
             y[i] = '0' + y[i]
     if len(y) >= 2:
-        return(y,input)
+        return(y,input) #Here we return a tuple where the first element is a tuple (X, Y, Z, P) latter is the input
     else: 
         return None
