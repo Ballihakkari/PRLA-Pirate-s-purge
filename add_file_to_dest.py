@@ -3,6 +3,7 @@ from pathlib import Path
 import filter_functions
 from filter_functions import *
 
+#Helper function, makes sure name is avalable and trys to move it
 def name_guarantee(name, file_location):
     i = 1
     temp_name = name
@@ -27,25 +28,30 @@ def add_file_to_dest(file_info, origin, destination):
     show_regex = re.compile(r'(S\d{2}E\d{2})')
     movie_regex = re.compile(r'\(\d{4}\)')
     
+    #If new file name matches tv show format
     if show_regex.search(file_name):
         series = Path((str((re.search(r'[^(S\d{2}E\d{2})]*', file_name).group(0))).strip()))
         
         season = Path(("Season " + str(re.search(r'(?<=S)(\d{2})', file_name).group(0))).strip())
+        #series == "." if unable to detemain info about show, move to misc insted 
         if str(series) == ".": #Unable to extract series name
             misc_dir = destination / Path("Miscellaneous")
             if not misc_dir.is_dir():
                 Path(misc_dir).mkdir(parents=True, exist_ok=True)
             name_guarantee(misc_dir /file_name, file_location)
-        else:
+        #If determaind to be tv show
+        else:   
             tv_dir = destination / Path("TV Shows") / series / season
             if not tv_dir.is_dir():
                 Path(tv_dir).mkdir(parents=True, exist_ok=True)
             name_guarantee(tv_dir / file_name, file_location)
+        #If determaind to be movie
     elif movie_regex.search(file_name):
         movies_dir = destination / Path("Movies")
         if not movies_dir.is_dir():
             Path(movies_dir).mkdir(parents=True, exist_ok=True)
         name_guarantee(movies_dir / file_name, file_location)
+        #If unable to determain file type
     else:
         misc_dir = destination / Path("Miscellaneous")
         if not misc_dir.is_dir():
