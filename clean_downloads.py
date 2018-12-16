@@ -8,8 +8,8 @@ import asyncio, sys, argparse, os
 from filter_functions import *
 
 def main():
-    origin = "C:\\Users\\Sæmundur\\Desktop\\downloads"
-    dest = "C:\\Users\\Sæmundur\\Desktop\\dest"
+    origin = ""
+    dest = ""
     if len(sys.argv) > 2 and  os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
         origin = sys.argv[1]
         dest = sys.argv[2]
