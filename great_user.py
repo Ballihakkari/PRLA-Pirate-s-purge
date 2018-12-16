@@ -55,6 +55,11 @@ async def great_user():
 
         #Asks user for settings preferences
         while settings_cont.lower() != 'y':
+            #TODO
+            #settings ideas
+                #abort
+                #put all .pdf in a folder together
+                #don't delete empty directories
             new_screen(origin, destination)
             input("There are no settings currently. Press enter to continue")
             settings_cont = "y"
