@@ -5,13 +5,7 @@ from pathlib import Path
 import os, time, sys, asyncio
 
 #async function to use have the script wait for askdirectory() 
-async def wait_for_askdirectory():
-    #TODO flush input
-        #Ok kannski létt bail á þetta
-        #Þetta er gg OS spasific
-    #TODO lostna við vírusar gluggan
-        #Turns out þetta er líka flókið
-        #Skoða þetta seinna(ef ég nenni)
+async def wait_for_askdirectory():)
     return askdirectory()
 
 def new_screen(origin, destination):
@@ -30,7 +24,6 @@ async def great_user():
     cont = True             #Must ask for destination and origin folder once
     destination_cont = ""   # != "y", therefore will be asked at least once
     origin_cont = ""        # != "y", therefore will be asked at least once
-    settings_cont = "y"     #Settings will not be automatically opened
     origin = ""             #Path to origin folder
     destination = ""        #Path to destination folder
     settings = ""           #Settings chosen
@@ -69,5 +62,3 @@ async def great_user():
             
     os.system('cls' if os.name == 'nt' else 'clear')
     return(origin, destination, settings)
-
-#print(asyncio.run(great_user()))
