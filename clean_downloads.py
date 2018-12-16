@@ -2,7 +2,7 @@ from pathlib import Path
 from re import match, search, sub, findall
 from regexfolders import regexes
 from filterSeason import filter_Season as filterSE
-from great_user import great_user
+# from great_user import great_user
 from add_file_to_dest import add_file_to_dest
 import asyncio, sys, argparse, os
 from filter_functions import *
@@ -41,11 +41,11 @@ def main():
     # return fileListNoEndings
 
 
-main()
+# main()
 # count = 0
 # for i in main():
 #     print(i)
-#     print(filterSE(i[-1]))
+#     # print(filterSE(i[-1]))
 #     count += 1    
 #     if not count % 40:
 #         input()
