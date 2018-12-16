@@ -3,37 +3,39 @@ from re import match, search, sub, findall
 from regex_folders import regexes
 from filter_season import filter_season as filterSE
 
-#Input is a path, the return value is a list of paths to all movie files
 def getFileDirList(origin):
+    """Input is a path, the return value is a list of paths to all movie files"""
+
     fileExtentionWhitelist = ['.avi', '.flv', '.mkv', '.mp4', '.mov', '.wmv'] #The suffixes for video/movie files
     return [i.relative_to(origin) for i in Path(origin).glob('**/*') if i.suffix.lower() in fileExtentionWhitelist]
 
-#Regex sub but it does not temper with the string suffix
+
 def regExReplace(regExString, replacementString, pathParts):
+    """Regex sub but it does not temper with the string suffix"""
     fileParts = pathParts[-1].rsplit('.',1)
     return pathParts[:-1] + (sub(regExString, replacementString, fileParts[0]) + '.' + fileParts[1],)
 
-#Takes in a list of paths to movies returns a list of movies with url removed from filenames
 #URL's should not be in the final title of our movies/episodes, ( removing all proof of downloading is important)
 def urlStripFilename(fileDirList):
+    """Takes in a list of paths to movies returns a list of movies with url removed from filenames"""
     return [regExReplace(regexes['url_detector'], '', i) for i in fileDirList]
 
 #Sample filter takes in a list of movies excludes all paths that have the name
-#"sample" in the path, we do not want short titles
 def sapleFilter(fileDirList):
+    """Sample filter takes in a list of movies excludes all paths that have the name"""
     return [i for i in fileDirList if len([j for j in i if search(regexes['sample'], j)]) == 0]
 
 #Takes away most symboles and replaces them with space to make the title cleaner
 def sybolStripFilename(fileDirList):
+    """Takes away most symboles and replaces them with space to make the title cleaner"""
     filtredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
         filtredList.append(i[:-1] + (sub('  +',' ',sub(r'[\.\-_\(\)\[\]\{\}]',' ',fileParts[0]).strip())+'.'+fileParts[1],))
     return filtredList
 
-#Takes strips away everything that is behind a calender year or season/episode name
-#to excract the title from the name. 
 def stripFilename(fileDirList): 
+    """strips away everything that is behind a calender year or season/episode name"""
     filteredList = []
     for i in fileDirList:
         if search(r'S\d{2}E\d{2} ',i[-1]):
@@ -48,8 +50,8 @@ def stripFilename(fileDirList):
     return filteredList
 
 
-#Sets the first letter of each word to a capital letter while lowering all other characters
 def titleFilename(fileDirList):
+    """Sets the first letter of each word to a capital letter while lowering all other characters"""
     filteredList = []
     for i in fileDirList:
         fileParts = i[-1].rsplit('.',1)
@@ -59,21 +61,6 @@ def titleFilename(fileDirList):
     
 
 def seasonFixer(fileDirLis):
-    # """" Old version """
-    # filteredList = []
-    # for i in fileDirLis:
-    #     if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-    #         se = filterSE(i[-1])
-    #         if se is not None:
-    #             # print(se)
-    #             filteredList.append(i[:-1] + (sub('(^| )[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?=[ \.])','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
-    #             # filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
-    #         else:
-    #             filteredList.append(i)
-    #     else:
-    #         filteredList.append(i)
-    # return filteredList
-
     """ New version """
     filteredList = []
     # count = 0
