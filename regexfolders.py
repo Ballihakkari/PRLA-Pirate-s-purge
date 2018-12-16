@@ -1,7 +1,7 @@
 regexes = {
     # Finding Season/Episodes from title/subfolders
-    'usual_series_format' : '[sS]\d{1,2} ?([eE] ?\d{1,2})+(?=\.)',
-    'series_and_episode_split_on_x' : '\d{1,2}x\d{1,2}',
+    'usual_series_format' : '[sS]\d{1,2} ?([eE] ?\d{1,2})+(?=[\. ])',
+    'series_and_episode_split_on_x' : '\d{1,2}[xX]\d{1,2}',
     'series_and_episode_split_on_dot' : '\[\d{1,2}\.\d{1,2}\]',
     'three_number_series_and_episodes' : '(?<=[ \.\-_,])\d{3,4}[abc]?(?=[ \.\-_,])',
     #'has_roman_numbers' : '(?:([sS][eE][aA][sS][Oo][nN]|[eE][pP][iI][sS][oO][dD][eE]|[eE]|[Ss]) ?)([IVXCLDM]+|\d{1,2})[ \.]',

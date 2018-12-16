@@ -93,44 +93,44 @@ def titleFilename(fileDirList):
 
 def seasonFixer(fileDirLis):
     # """" Old version """
-    filteredList = []
-    for i in fileDirLis:
-        if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-            se = filterSE(i)
-            if se is not None:
-                # print(se)
-                filteredList.append(i[:-1] + (sub('(^| )[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?=[ \.])','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
-                # filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
-            else:
-                filteredList.append(i)
-        else:
-            filteredList.append(i)
-    return filteredList
+    # filteredList = []
+    # for i in fileDirLis:
+    #     if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
+    #         se = filterSE(i[-1])
+    #         if se is not None:
+    #             # print(se)
+    #             filteredList.append(i[:-1] + (sub('(^| )[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?=[ \.])','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
+    #             # filteredList.append(i[:-1] + (sub('[Ss]?\d{1,2}([EeXx ]+\d{1,2}|[EeXx ]*\d{2})(?= )','S'+se[0][0].zfill(2)+'E'+se[0][1].zfill(2),i[-1],1),))
+    #         else:
+    #             filteredList.append(i)
+    #     else:
+    #         filteredList.append(i)
+    # return filteredList
 
-    # """ New version """
+    """ New version """
     filteredList = []
     # count = 0
     for i in fileDirLis:
-        if search(r'[Ss]?\d{1,2}[EeXx ]*\d{1,2}(?= )',i[-1]):
-            se = filterSE(i)
-            try:
-                if int(se[1]) > 1900:
-                    filteredList.append(i)
-                else:
-                    eval('420/0') #here we devide by zero, for comedic effect
-            except:
-                if se:
-                    SeriesString = 'S'
-                    for epse in se[0]:
-                        SeriesString+=epse+'E'
-                    SeriesString = SeriesString[:-1]
-                    filteredList.append(i[:-1] + (sub(se[1],SeriesString,i[-1],1),))
-                else:
-                    filteredList.append(i)
-        else:
-            # print("Not Fixed: ", i)
-            filteredList.append(i)
-    # print(count)
+        se = filterSE(i[-1])
+        try:
+            if int(se[1]) > 1900:
+                filteredList.append(i)
+            else:
+                eval('420/0') #here we devide by zero, for comedic effect
+        except:
+            if se:
+                SeriesString = 'S'
+                for epse in se[0]:
+                    SeriesString+=epse+'E'
+                SeriesString = SeriesString[:-1]
+                i = list(i)
+                # print(i)
+                # print(se[1])
+                i[-1] = sub(se[1], SeriesString, i[-1], 1)
+                # print(i)
+                filteredList.append(tuple(i))
+            else:
+                filteredList.append(i)
     return filteredList
 
 
@@ -373,15 +373,14 @@ def romanNumCap(fileDirLis):
 
 
 # main()
-count = 0
-for i in main():
-    print(i)
-    print(filterSE(i))
-    count += 1    
-    if not count % 40:
-        input()
-print(count)
-
+# count = 0
+# for i in main():
+#     print(i)
+#     print(filterSE(i[-1]))
+#     count += 1    
+#     if not count % 40:
+#         input()
+# print(count)
 
 step_1 = getFileDirList("Test Data/downloads")
 print("S1: ", len(step_1))
