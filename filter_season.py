@@ -1,8 +1,8 @@
 import re
-from regexfolders import regexes
+from regex_folders import regexes
 from roman_to_arabic import roman_to_arabic
 from extract_season_episode import extract_season_episode as extractSE
-def filter_Season(j):
+def filter_season(j):
     has_roman = re.findall(regexes['has_roman_numbers'], j)
     #Has roman returns a list of stringsif matched
     #All others return a string
