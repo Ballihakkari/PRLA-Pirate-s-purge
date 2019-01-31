@@ -5,7 +5,7 @@ from pathlib import Path
 import os, time, sys, asyncio
 
 #async function to use have the script wait for askdirectory() 
-async def wait_for_askdirectory():)
+async def wait_for_askdirectory():
     return askdirectory()
 
 def new_screen(origin, destination):
